@@ -1,0 +1,35 @@
+{
+  "name": "bluez",
+  "version": "0.1.0",
+  "description": "Bluez5 D-Bus library for easy to use bluetooth access in node",
+  "keywords": [
+    "bluez",
+    "bluez5",
+    "bluetooth",
+    "dbus",
+    "d-bus"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node-gyp configure build"
+  },
+  "author": "WaeCo <aaqqws@googlemail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/waeco/node-bluez#readme",
+  "dependencies": {
+    "dbus": "github:Shouqun/node-dbus",
+    "errno": "^0.1.5",
+    "nan": "^2.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/waeco/node-bluez.git"
+  },
+  "bugs": {
+    "url": "https://github.com/waeco/node-bluez/issues"
+  },
+  "os": [
+    "!win32"
+  ]
+}
