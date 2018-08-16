@@ -1,6 +1,6 @@
 {
   "name": "bluez",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bluez5 D-Bus library for easy to use bluetooth access in node",
   "keywords": [
     "bluez",
