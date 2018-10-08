@@ -118,14 +118,41 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 A Device represents a remote Bluetooth device.
 
+For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/device-api.txt).
+
 ##### `constructor(interface: DBus.Interface): Device`
 
 *interface* is the DBus Interface corresponding the the Device.
 
-Should not be called directly. Use `Bluez.getAdapter()`.
+Should not be called directly. Use `Bluez.getDevice()`.
+
+##### `getService(uuid: string): Service | undefined`
+
+Get a GATT Service of the Device.
 
 
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/device-api.txt).
+
+##### Service
+
+For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
+
+##### `getCharacteristic(uuid: string): Characteristic | undefined`
+
+Get a GATT Characteristic of the Service.
+
+##### Characteristic
+
+For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
+
+##### `getDescriptor(uuid: string): Descriptor | undefined`
+
+Get a GATT Descriptor of the Characteristic.
+
+##### Descriptor
+
+For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
+
+
 
 #### Profile
 
