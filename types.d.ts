@@ -2,24 +2,24 @@
 import * as stream from 'stream';
 import * as DBus from 'dbus';
 
-export class Bluez extends NodeJS.EventEmitter {
+declare class Bluez extends NodeJS.EventEmitter {
     constructor(options?: {
         bus?: DBus,
         service?: DBus.Service | string | null,
         objectPath?: string
     });
-    getAdapter(dev: string): Promise<Adapter>;
-    getDevice(address: string): Promise<Device>;
+    getAdapter(dev: string): Promise<Bluez.Adapter>;
+    getDevice(address: string): Promise<Bluez.Device>;
     getUserService(): any;
     getUserServiceObject(): any;
     init(): Promise<void>;
-    registerAgent(agent: Agent, capabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay"): Promise<void>;
+    registerAgent(agent: Bluez.Agent, capabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay"): Promise<void>;
     registerDefaultAgent(): Promise<void>;
-    registerProfile(profile: Profile, options: any): Promise<void>;
-    registerSerialProfile(listener: (device: Device, socket: RawFdSocket) => void, mode?: string): Promise<void>;
+    registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
+    registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.RawFdSocket) => void, mode?: string): Promise<void>;
 }
-export namespace Bluez {
-    export class Adapter {
+declare namespace Bluez {
+    class Adapter {
         constructor(...args: any[]);
         RemoveDevice(devicePath: string | Device): Promise<void>;
         SetDiscoveryFilter(filter: any): Promise<void>;
@@ -40,19 +40,19 @@ export namespace Bluez {
         Powered(value?: boolean): Promise<void | boolean>;
         UUIDs(): Promise<any>;
     }
-    export class Agent {
-        constructor();
-        AuthorizeService(...args: any[]): Promise<any>;
-        Cancel(...args: any[]): Promise<any>;
-        DisplayPasskey(...args: any[]): Promise<any>;
-        DisplayPinCode(...args: any[]): Promise<any>;
-        Release(...args: any[]): Promise<any>;
-        RequestAuthorization(...args: any[]): Promise<any>;
-        RequestConfirmation(...args: any[]): Promise<any>;
-        RequestPasskey(...args: any[]): Promise<any>;
-        RequestPinCode(...args: any[]): Promise<any>;
+    class Agent {
+        constructor(...args: any[]);
+        AuthorizeService(...args: any[]): void;
+        Cancel(...args: any[]): void;
+        DisplayPasskey(...args: any[]): void;
+        DisplayPinCode(...args: any[]): void;
+        Release(...args: any[]): void;
+        RequestAuthorization(...args: any[]): void;
+        RequestConfirmation(...args: any[]): void;
+        RequestPasskey(...args: any[]): void;
+        RequestPinCode(...args: any[]): void;
     }
-    export class Device {
+    class Device {
         constructor(...args: any[]);
         Connect(): Promise<void>;
         ConnectProfile(uuid: string): Promise<void>;
@@ -84,11 +84,11 @@ export namespace Bluez {
 
         getService(uuid: string): Service | undefined;
     }
-    export class Service {
+    class Service {
         getCharacteristic(uuid: string): Characteristic | undefined;
         //TODO: properties
     }
-    export class Characteristic {
+    class Characteristic {
         getDescriptor(uuid: string): Descriptor | undefined;
         ReadValue(options?: any): Promise<Buffer>;
         WriteValue(value: number[], options?: any): Promise<void>;
@@ -99,22 +99,24 @@ export namespace Bluez {
 
         //TODO: properties
     }
-    export class Descriptor {
+    class Descriptor {
         //TODO: properties
     }
-    export class Profile {
+    class Profile {
         constructor(...args: any[]);
         NewConnection(...args: any[]): void;
-        Release(...args: any[]): Promise<any>;
-        RequestDisconnection(...args: any[]): Promise<any>;
+        Release(...args: any[]): void;
+        RequestDisconnection(...args: any[]): void;
     }
-    export class RawFdSocket extends stream.Duplex {
+    class RawFdSocket extends stream.Duplex {
         constructor(fd: number, options?: stream.DuplexOptions);
         close(): void;
     }
-    export class SerialProfile extends Profile {
+    class SerialProfile extends Profile {
         constructor(...args: any[]);
         NewConnection(...args: any[]): void;
         static uuid: string;
     }
 }
+
+export = Bluez;
