@@ -71,8 +71,8 @@ async function handleDevice(address, props) {
     }
 
     // wait until services are resolved
-    for(let i=0; !await device.ServicesResolved(); i++) {
-        if(i > 100) {
+    for (let i = 0; !await device.ServicesResolved(); i++) {
+        if (i > 100) {
             throw new Error("No Services found");
         }
         await delay(100);
@@ -80,32 +80,32 @@ async function handleDevice(address, props) {
 
     // get the Service
     const service = device.getService("0000ffe0-0000-1000-8000-00805f9b34fb");
-    if(!service) return console.log("No Service");
+    if (!service) return console.log("No Service");
     // get the Characteristic from the Service
     const char = service.getCharacteristic("00004141-0000-1000-8000-00805f9b34fb");
-    if(!char) return console.log("No Characteristic");
-    
+    if (!char) return console.log("No Characteristic");
+
     // get a notification socket
     const not = await char.AcquireNotify();
     not.on("data", async (data) => {
         console.log("Read: " + data.toString());
 
         // end program on recv
-        not.end();
+        not.close();
         await device.Disconnect();
         bluetooth.bus.disconnect();
     });
-    
+
     // get a write socket
     const writer = await char.AcquireWrite();
     console.log("Send: Test");
     writer.write("Test");
-    writer.end();
+    writer.close();
 
     // alternatively write value directly
     //await char.WriteValue([...Buffer.from("Test").values()]);
 
     //console.log(props);
     if (adapter)
-        await adapter.StopDiscovery().catch(()=>{});
+        await adapter.StopDiscovery().catch(() => { });
 }
