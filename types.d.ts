@@ -110,7 +110,6 @@ declare namespace Bluez {
     }
     class RawFdSocket extends stream.Duplex {
         constructor(fd: number, options?: stream.DuplexOptions);
-        close(): void;
     }
     class SerialProfile extends Profile {
         constructor(...args: any[]);

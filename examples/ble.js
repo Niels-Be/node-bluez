@@ -91,7 +91,7 @@ async function handleDevice(address, props) {
         console.log("Read: " + data.toString());
 
         // end program on recv
-        not.close();
+        not.end();
         await device.Disconnect();
         bluetooth.bus.disconnect();
     });
@@ -100,7 +100,7 @@ async function handleDevice(address, props) {
     const writer = await char.AcquireWrite();
     console.log("Send: Test");
     writer.write("Test");
-    writer.close();
+    writer.end();
 
     // alternatively write value directly
     //await char.WriteValue([...Buffer.from("Test").values()]);
