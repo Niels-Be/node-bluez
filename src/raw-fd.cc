@@ -81,8 +81,8 @@ int RawFd::write_(char* data, int length) {
 
 bool RawFd::close_() {
   this->stop();
-  if(shutdown(this->_fd, SHUT_RDWR) != 0)
-    return false;
+  //if(shutdown(this->_fd, SHUT_RDWR) != 0)
+  //  return false;
   if(close(this->_fd) != 0)
     return false;
   return true;
@@ -193,6 +193,7 @@ void RawFd::Init(v8::Local<v8::Object> exports, v8::Local<v8::Object> module) {
   Nan::SetPrototypeMethod(tmpl, "start", Start);
   Nan::SetPrototypeMethod(tmpl, "stop", Stop);
   Nan::SetPrototypeMethod(tmpl, "write", Write);
+  Nan::SetPrototypeMethod(tmpl, "close", Close);
 
   module->Set(Nan::New("exports").ToLocalChecked(), tmpl->GetFunction());
 }
