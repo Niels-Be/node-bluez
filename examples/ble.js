@@ -73,20 +73,32 @@ async function handleDevice(address, props) {
     // wait until services are resolved
     for (let i = 0; !await device.ServicesResolved(); i++) {
         if (i > 100) {
+            const props = await device.getProperties();
             throw new Error("No Services found");
         }
         await delay(100);
     }
+    await delay(10);
 
     // get the Service
     const service = device.getService("0000ffe0-0000-1000-8000-00805f9b34fb");
     if (!service) return console.log("No Service");
     // get the Characteristic from the Service
-    const char = service.getCharacteristic("00004141-0000-1000-8000-00805f9b34fb");
-    if (!char) return console.log("No Characteristic");
+    const characteristic = service.getCharacteristic("00004141-0000-1000-8000-00805f9b34fb");
+    if (!characteristic) return console.log("No Characteristic");
 
+    // on old Bluez versions < 5.48 AcquireNotify and AcquireWrite are not available
+    // if thats the case use handleComOld
+    await handleCom(device, characteristic);
+    //await handleComOld(device, characteristic);
+
+    if (adapter)
+        await adapter.StopDiscovery().catch(() => { });
+}
+
+async function handleCom(device, characteristic) {
     // get a notification socket
-    const not = await char.AcquireNotify();
+    const not = await characteristic.AcquireNotify();
     not.on("data", async (data) => {
         console.log("Read: " + data.toString());
 
@@ -97,15 +109,29 @@ async function handleDevice(address, props) {
     });
 
     // get a write socket
-    const writer = await char.AcquireWrite();
+    const writer = await characteristic.AcquireWrite();
     console.log("Send: Test");
     writer.write("Test");
     writer.end();
+}
 
-    // alternatively write value directly
-    //await char.WriteValue([...Buffer.from("Test").values()]);
+async function handleComOld(device, characteristic) {
+    // get a notification socket
+    await characteristic.StartNotify();
+    characteristic.changed.on("PropertiesChanged", async (intf, props, opts) => {
+        if(intf !== "org.bluez.GattCharacteristic1") return;
+        if(!props.Value) return;
+        console.log("Read: " + Buffer.from(props.Value).toString());
 
-    //console.log(props);
-    if (adapter)
-        await adapter.StopDiscovery().catch(() => { });
+        await characteristic.StopNotify();
+        // end program on recv
+        await device.Disconnect();
+        bluetooth.bus.disconnect();
+    });
+    //const props = await characteristic.getProperties();
+    //check for props.Notifying
+
+    // get a write socket
+    console.log("Send: Test");
+    await characteristic.WriteValue([...Buffer.from("Test")]);
 }
