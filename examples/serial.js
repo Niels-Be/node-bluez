@@ -27,7 +27,7 @@ bluetooth.on('device', async (address, props) => {
 bluetooth.init().then(async ()=>{
 
     // Register Agent that accepts everything and uses key 1234
-    await bluetooth.registerDefaultAgent();
+    await bluetooth.registerDummyAgent();
     console.log("Agent registered");
     
     // Register a Serial Client Service
