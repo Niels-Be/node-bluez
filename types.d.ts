@@ -99,7 +99,13 @@ declare namespace Bluez {
 
         on(event: "notify", listener: (value: string) => void): this;
 
-        //TODO: properties
+        readonly UUID: Promise<string>;
+        readonly Service: Promise<string>;
+        readonly Value: Promise<number[]>;
+        readonly WriteAcquired: Promise<boolean>;
+        readonly NotifyAcquired: Promise<boolean>;
+        readonly Notifying: Promise<boolean>;
+        readonly Flags: Promise<string[]>;
     }
     class Descriptor {
         //TODO: properties
