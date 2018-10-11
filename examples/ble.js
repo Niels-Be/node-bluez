@@ -118,10 +118,8 @@ async function handleCom(device, characteristic) {
 async function handleComOld(device, characteristic) {
     // get a notification socket
     await characteristic.StartNotify();
-    characteristic.changed.on("PropertiesChanged", async (intf, props, opts) => {
-        if(intf !== "org.bluez.GattCharacteristic1") return;
-        if(!props.Value) return;
-        console.log("Read: " + Buffer.from(props.Value).toString());
+    characteristic.on("notify", async (value) => {
+        console.log("Read: " + value);
 
         await characteristic.StopNotify();
         // end program on recv

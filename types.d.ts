@@ -88,7 +88,7 @@ declare namespace Bluez {
         getCharacteristic(uuid: string): Characteristic | undefined;
         //TODO: properties
     }
-    class Characteristic {
+    class Characteristic extends NodeJS.EventEmitter {
         getDescriptor(uuid: string): Descriptor | undefined;
         ReadValue(options?: any): Promise<Buffer>;
         WriteValue(value: number[], options?: any): Promise<void>;
@@ -96,6 +96,8 @@ declare namespace Bluez {
         AcquireNotify(options?: any): Promise<RawFdSocket>;
         StartNotify(): Promise<void>;
         StopNotify(): Promise<void>;
+
+        on(event: "notify", listener: (value: string) => void): this;
 
         //TODO: properties
     }
