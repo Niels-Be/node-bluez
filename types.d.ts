@@ -17,6 +17,9 @@ declare class Bluez extends NodeJS.EventEmitter {
     registerDummyAgent(requestAsDefault?: boolean): Promise<void>;
     registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
     registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.RawFdSocket) => void, mode?: string): Promise<void>;
+
+    on(event: "device", listener: (address: string, props: any) => void): this;
+    on(event: "error", listener: (error: Error) => void): this;
 }
 declare namespace Bluez {
     class Adapter {
