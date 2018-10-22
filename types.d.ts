@@ -30,6 +30,10 @@ declare namespace Bluez {
         StartDiscovery(): Promise<void>;
         StopDiscovery(): Promise<void>;
 
+        getProperties(): Promise<any>;
+        getProperty(name: string): Promise<any>;
+        setProperty(name: string, value: any): Promise<void>;
+
         Address(): Promise<any>;
         Alias(): Promise<any>;
         Class(): Promise<any>;
@@ -65,6 +69,10 @@ declare namespace Bluez {
         Pair(): Promise<void>;
         CancelPairing(): Promise<void>;
 
+        getProperties(): Promise<any>;
+        getProperty(name: string): Promise<any>;
+        setProperty(name: string, value: any): Promise<void>;
+
         Adapter(): Promise<any>;
         Address(): Promise<any>;
         AdvertisingFlags(): Promise<any>;
@@ -90,6 +98,9 @@ declare namespace Bluez {
     class Service {
         getCharacteristic(uuid: string): Characteristic | undefined;
         //TODO: properties
+        getProperties(): Promise<any>;
+        getProperty(name: string): Promise<any>;
+        setProperty(name: string, value: any): Promise<void>;
     }
     class Characteristic extends NodeJS.EventEmitter {
         getDescriptor(uuid: string): Descriptor | undefined;
@@ -102,6 +113,10 @@ declare namespace Bluez {
 
         on(event: "notify", listener: (value: string) => void): this;
 
+        getProperties(): Promise<any>;
+        getProperty(name: string): Promise<any>;
+        setProperty(name: string, value: any): Promise<void>;
+
         readonly UUID: Promise<string>;
         readonly Service: Promise<string>;
         readonly Value: Promise<number[]>;
@@ -112,6 +127,9 @@ declare namespace Bluez {
     }
     class Descriptor {
         //TODO: properties
+        getProperties(): Promise<any>;
+        getProperty(name: string): Promise<any>;
+        setProperty(name: string, value: any): Promise<void>;
     }
     class Profile {
         constructor(...args: any[]);
