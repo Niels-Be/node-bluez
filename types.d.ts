@@ -49,6 +49,7 @@ declare namespace Bluez {
     }
     class Agent {
         constructor(...args: any[]);
+        Unregister(): Promise<void>;
         AuthorizeService(...args: any[]): void;
         Cancel(...args: any[]): void;
         DisplayPasskey(...args: any[]): void;
