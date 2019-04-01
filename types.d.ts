@@ -16,7 +16,7 @@ declare class Bluez extends NodeJS.EventEmitter {
     registerAgent(agent: Bluez.Agent, capabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay", requestAsDefault?: boolean): Promise<void>;
     registerDummyAgent(requestAsDefault?: boolean): Promise<void>;
     registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
-    registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.RawFdSocket) => void, mode?: string): Promise<void>;
+    registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.RawFdSocket) => void, mode?: string, options?: stream.DuplexOptions): Promise<void>;
 
     on(event: "device", listener: (address: string, props: any) => void): this;
     on(event: "error", listener: (error: Error) => void): this;
@@ -64,35 +64,35 @@ declare namespace Bluez {
         constructor(...args: any[]);
         Connect(): Promise<void>;
         ConnectProfile(uuid: string): Promise<void>;
-        Connected(): Promise<void>;
         Disconnect(): Promise<void>;
         DisconnectProfile(uuid: string): Promise<void>;
         Pair(): Promise<void>;
         CancelPairing(): Promise<void>;
-
+        
         getProperties(): Promise<any>;
         getProperty(name: string): Promise<any>;
         setProperty(name: string, value: any): Promise<void>;
-
+        
         Adapter(): Promise<any>;
-        Address(): Promise<any>;
+        Address(): Promise<string>;
         AdvertisingFlags(): Promise<any>;
-        Alias(): Promise<any>;
+        Alias(): Promise<string>;
         Appearance(): Promise<any>;
-        Blocked(): Promise<any>;
+        Blocked(): Promise<boolean>;
         Class(): Promise<any>;
+        Connected(): Promise<boolean>;
         Icon(): Promise<any>;
-        LegacyPairing(): Promise<any>;
+        LegacyPairing(): Promise<boolean>;
         ManufacturerData(): Promise<any>;
         Modalias(): Promise<any>;
-        Name(): Promise<any>;
-        Paired(): Promise<any>;
+        Name(): Promise<string>;
+        Paired(): Promise<boolean>;
         RSSI(): Promise<any>;
         ServiceData(): Promise<any>;
-        ServicesResolved(): Promise<any>;
-        Trusted(): Promise<any>;
+        ServicesResolved(): Promise<boolean>;
+        Trusted(): Promise<boolean>;
         TxPower(): Promise<any>;
-        UUIDs(): Promise<any>;
+        UUIDs(): Promise<string[]>;
 
         getService(uuid: string): Service | undefined;
     }
@@ -133,18 +133,25 @@ declare namespace Bluez {
         setProperty(name: string, value: any): Promise<void>;
     }
     class Profile {
-        constructor(...args: any[]);
-        NewConnection(...args: any[]): void;
-        Release(...args: any[]): void;
-        RequestDisconnection(...args: any[]): void;
+        public readonly uuid: string;
+        protected bluez: Bluez;
+        protected _DBusObject: any;
+        protected _DBusInterface: any;
+
+        public constructor(bluez: Bluez, dbusObject: any);
+        public NewConnection(device: string, fd: number, options: any, callback: Function): void;
+        public Release(callback: Function): void;
+        public RequestDisconnection(device: string, callback: Function): void;
     }
     class RawFdSocket extends stream.Duplex {
         constructor(fd: number, options?: stream.DuplexOptions);
     }
     class SerialProfile extends Profile {
-        constructor(...args: any[]);
-        NewConnection(...args: any[]): void;
-        static uuid: string;
+        public static uuid: string;
+        protected listener: Function;
+
+        public constructor(...args: any[]);
+        public NewConnection(device: string, fd: number, options: any, callback: Function): void;
     }
 }
 
