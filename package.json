@@ -19,9 +19,9 @@
   "license": "MIT",
   "homepage": "https://github.com/waeco/node-bluez#readme",
   "dependencies": {
-    "dbus": "^1.0.3",
+    "dbus": "^1.0.5",
     "errno": "^0.1.5",
-    "nan": "^2.1.0"
+    "nan": "^2.14.0"
   },
   "repository": {
     "type": "git",

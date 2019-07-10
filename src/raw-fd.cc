@@ -102,7 +102,7 @@ NAN_METHOD(RawFd::New) {
   if (! (arg0->IsInt32() || arg0->IsUint32())) {
     return Nan::ThrowTypeError("usage: RawFd(fd, readCallback)");
   }
-  int fd = arg0->IntegerValue();
+  int fd = Nan::To<int32_t>(arg0).FromJust();
   if(fd < 0) {
     return Nan::ThrowTypeError("usage: RawFd(fd, readCallback)");
   }
@@ -195,7 +195,7 @@ void RawFd::Init(v8::Local<v8::Object> exports, v8::Local<v8::Object> module) {
   Nan::SetPrototypeMethod(tmpl, "write", Write);
   Nan::SetPrototypeMethod(tmpl, "close", Close);
 
-  module->Set(Nan::New("exports").ToLocalChecked(), tmpl->GetFunction());
+  NAN_EXPORT(module, RawFd::New);
 }
 
 NODE_MODULE(RawFd, RawFd::Init);
