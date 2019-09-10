@@ -1,6 +1,6 @@
 {
   "name": "bluez",
-  "version": "0.3.1",
+  "version": "1.0.0",
   "description": "Bluez5 D-Bus library for easy to use bluetooth access in node",
   "keywords": [
     "bluez",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "homepage": "https://github.com/waeco/node-bluez#readme",
   "dependencies": {
-    "dbus": "^1.0.5",
+    "dbus-next": "^0.7.1",
     "errno": "^0.1.5",
     "nan": "^2.14.0"
   },
@@ -32,5 +32,9 @@
   },
   "os": [
     "!win32"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^12.7.4",
+    "typescript": "^3.6.2"
+  }
 }
