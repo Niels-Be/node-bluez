@@ -4,19 +4,26 @@ declare module 'dbus-next' {
     export type ObjectPath = string;
 
     export namespace interface {
+        interface PropertyOptions {
+
+        }
         interface MethodOptions {
             inSignature?: string;
             outSignature?: string;
             name?: string;
             disabled?: boolean;
         }
+        interface SignalOptions {
+
+        }
 
         export class Interface {
             constructor(name: string);
+            static configureMembers(members: {properties?: {[key:string]: PropertyOptions}, methods?: {[key:string]: MethodOptions}, signals?: {[key:string]: SignalOptions}}): void;
          }
-        export function property(): PropertyDecorator;
+        export function property(opts: PropertyOptions): PropertyDecorator;
         export function method(opts: MethodOptions): MethodDecorator;
-        export function signal(): MethodDecorator;
+        export function signal(opts: SignalOptions): MethodDecorator;
     }
     export class Variant { }
     export class DBusError extends Error {

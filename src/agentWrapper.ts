@@ -22,7 +22,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         agent, because when this method gets called it has
         already been unregistered.
     */
-    @DBus.interface.method({ inSignature: '', outSignature: '' })
     Release() {
         if (this.impl.Release)
             return this.impl.Release();
@@ -39,7 +38,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'o', outSignature: 's' })
     async RequestPinCode(device: DBus.ObjectPath) {
         const dev = await this.bluez.getDeviceFromObject(device);
         return this.impl.RequestPinCode(dev);
@@ -69,7 +67,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'os', outSignature: '' })
     async DisplayPinCode(device: DBus.ObjectPath, pincode: string) {
         if (this.impl.DisplayPinCode) {
             const dev = await this.bluez.getDeviceFromObject(device);
@@ -88,7 +85,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'o', outSignature: 'u' })
     async RequestPasskey(device: DBus.ObjectPath) {
         const dev = await this.bluez.getDeviceFromObject(device);
         return this.impl.RequestPasskey(dev);
@@ -114,7 +110,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         so the display should be zero-padded at the start if
         the value contains less than 6 digits.
     */
-    @DBus.interface.method({ inSignature: 'ouq', outSignature: '' })
     async DisplayPasskey(device: DBus.ObjectPath, passkey: number, entered: number) {
         if (this.impl.DisplayPasskey) {
             const dev = await this.bluez.getDeviceFromObject(device);
@@ -137,7 +132,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'ou', outSignature: '' })
     async RequestConfirmation(device: DBus.ObjectPath, passkey: number) {
         if (this.impl.RequestConfirmation) {
             const dev = await this.bluez.getDeviceFromObject(device);
@@ -158,7 +152,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'o', outSignature: '' })
     async RequestAuthorization(device: DBus.ObjectPath) {
         if (this.impl.RequestAuthorization) {
             const dev = await this.bluez.getDeviceFromObject(device);
@@ -174,7 +167,6 @@ export class AgentWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'os', outSignature: '' })
     async AuthorizeService(device: DBus.ObjectPath, uuid: string) {
         if (this.impl.AuthorizeService) {
             const dev = await this.bluez.getDeviceFromObject(device);
@@ -187,10 +179,22 @@ export class AgentWrapper extends DBus.interface.Interface {
         This method gets called to indicate that the agent
         request failed before a reply was returned.
     */
-    @DBus.interface.method({ inSignature: '', outSignature: '' })
     async Cancel() {
         if (this.impl.Cancel)
             return this.impl.Cancel();
     }
 
 }
+AgentWrapper.configureMembers({
+    methods: {
+        Release: {},
+        RequestPinCode: { inSignature: 'o', outSignature: 's' },
+        DisplayPinCode: { inSignature: 'os' },
+        RequestPasskey: { inSignature: 'o', outSignature: 'u' },
+        DisplayPasskey: { inSignature: 'ouq' },
+        RequestConfirmation: { inSignature: 'ou' },
+        RequestAuthorization: { inSignature: 'o' },
+        AuthorizeService: { inSignature: 'os' },
+        Cancel: {},
+    }
+});

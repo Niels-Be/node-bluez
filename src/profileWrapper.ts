@@ -23,7 +23,6 @@ export class ProfileWrapper extends DBus.interface.Interface {
         profile, because when this method gets called it has
         already been unregistered.
     */
-    @DBus.interface.method({ inSignature: '', outSignature: '' })
     Release() {
         if (this.impl.Release)
             return this.impl.Release();
@@ -43,7 +42,6 @@ export class ProfileWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                          org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'oua{sv}', outSignature: '' })
     async NewConnection(device: DBus.ObjectPath, fd: number, options: {[name: string]: any}) {
         const dev = await this.bluez.getDeviceFromObject(device);
         return this.impl.NewConnection(dev, fd, options);
@@ -66,7 +64,6 @@ export class ProfileWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                          org.bluez.Error.Canceled
     */
-    @DBus.interface.method({ inSignature: 'o', outSignature: '' })
     async RequestDisconnection(device: DBus.ObjectPath) {
         if (this.impl.RequestDisconnection) {
             const dev = await this.bluez.getDeviceFromObject(device);
@@ -75,3 +72,10 @@ export class ProfileWrapper extends DBus.interface.Interface {
     }
 
 }
+ProfileWrapper.configureMembers({
+    methods: {
+        Release: {},
+        NewConnection: { inSignature: 'oua{sv}' },
+        RequestDisconnection: { inSignature: 'o'},
+    }
+});
