@@ -20,9 +20,7 @@
   "license": "MIT",
   "homepage": "https://github.com/waeco/node-bluez#readme",
   "dependencies": {
-    "dbus-next": "git+https://github.com/dbusjs/node-dbus-next.git",
-    "errno": "^0.1.5",
-    "nan": "^2.14.0"
+    "dbus-next": "git+https://github.com/dbusjs/node-dbus-next.git"
   },
   "repository": {
     "type": "git",
