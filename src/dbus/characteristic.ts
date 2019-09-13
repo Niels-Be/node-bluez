@@ -95,12 +95,12 @@ export class OrgBluezGattCharacteristic1 extends EventEmitter {
     }
 
     //@method({ name: 'AcquireWrite', inSignature: 'a{sv}', outSignature: 'hq' })
-    public AcquireWrite(options: {[key: string]: DBus.Variant}): Promise<any> {
+    public AcquireWrite(options: {[key: string]: DBus.Variant}): Promise<[number, number]> {
         return this.thisDBusInterface.AcquireWrite(options);
     }
 
     //@method({ name: 'AcquireNotify', inSignature: 'a{sv}', outSignature: 'hq' })
-    public AcquireNotify(options: {[key: string]: DBus.Variant}): Promise<any> {
+    public AcquireNotify(options: {[key: string]: DBus.Variant}): Promise<[number, number]> {
         return this.thisDBusInterface.AcquireNotify(options);
     }
 
