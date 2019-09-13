@@ -23,7 +23,7 @@ export class OrgBluezGattService1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -34,7 +34,7 @@ export class OrgBluezGattService1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -72,7 +72,7 @@ export class OrgBluezGattService1 extends EventEmitter {
 }
 /***** Signals for org.bluez.GattService1 *****/
 export declare interface OrgBluezGattService1 {
-    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: {[key:string]: any}, invalidatedProperties: string[]) => void): this;
+    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: { [key: string]: any }, invalidatedProperties: string[]) => void): this;
     on(event: string, listener: Function): this;
 }
 

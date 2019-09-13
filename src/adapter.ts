@@ -10,17 +10,17 @@ export class Adapter extends OrgBluezAdapter1 {
         super(dbusObject);
 
         this.bluez.getObjectManager().on("InterfacesAdded", (objPath, interfaces) => {
-            if(objPath.startsWith(dbusObject.path) && "org.bluez.Device1" in interfaces) {
+            if (objPath.startsWith(dbusObject.path) && "org.bluez.Device1" in interfaces) {
                 const props = interfaces['org.bluez.Device1'];
                 // TODO: discuss if we should provided the device interface directly or only provide props
                 this.emit("DeviceAdded", props.Address, props);
             }
         });
         this.bluez.getObjectManager().on("InterfacesRemoved", (objPath, interfaces) => {
-            if(objPath.startsWith(dbusObject.path) && "org.bluez.Device1" in interfaces) {
+            if (objPath.startsWith(dbusObject.path) && "org.bluez.Device1" in interfaces) {
                 // get address from dbus node
                 const path = objPath.split("/");
-                const address = path[path.length - 1].replace(/^dev_/,"").replace(/_/g, ":");
+                const address = path[path.length - 1].replace(/^dev_/, "").replace(/_/g, ":");
                 this.emit("DeviceRemoved", address);
             }
         });
@@ -33,7 +33,7 @@ export class Adapter extends OrgBluezAdapter1 {
             const path = objPath.split("/");
             return path[path.length - 1] === nodeName;
         });
-        if(node === undefined) throw new DBusError("org.bluez.Error.DoesNotExist", "Device not found");
+        if (node === undefined) throw new DBusError("org.bluez.Error.DoesNotExist", "Device not found");
         return this.bluez.getDeviceFromObject(node);
     }
 
@@ -45,7 +45,7 @@ export class Adapter extends OrgBluezAdapter1 {
 
 }
 export declare interface Adapter {
-    on(event: "DeviceAdded", listener: (address: string, props: any)=>void): this;
-    on(event: "DeviceRemoved", listener: (address: string)=>void): this;
+    on(event: "DeviceAdded", listener: (address: string, props: any) => void): this;
+    on(event: "DeviceRemoved", listener: (address: string) => void): this;
     on(event: string, listener: Function): this;
 }

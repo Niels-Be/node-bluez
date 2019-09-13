@@ -23,7 +23,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -34,7 +34,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -65,7 +65,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     public Alias(): Promise<string>;
     public Alias(value: string): Promise<void>;
     public Alias(value?: string): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Alias', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Alias');
@@ -81,7 +81,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     public Powered(): Promise<boolean>;
     public Powered(value: boolean): Promise<void>;
     public Powered(value?: boolean): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Powered', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Powered');
@@ -92,7 +92,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     public Discoverable(): Promise<boolean>;
     public Discoverable(value: boolean): Promise<void>;
     public Discoverable(value?: boolean): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Discoverable', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Discoverable');
@@ -103,7 +103,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     public DiscoverableTimeout(): Promise<number>;
     public DiscoverableTimeout(value: number): Promise<void>;
     public DiscoverableTimeout(value?: number): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'DiscoverableTimeout', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'DiscoverableTimeout');
@@ -114,7 +114,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     public Pairable(): Promise<boolean>;
     public Pairable(value: boolean): Promise<void>;
     public Pairable(value?: boolean): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Pairable', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Pairable');
@@ -125,7 +125,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     public PairableTimeout(): Promise<number>;
     public PairableTimeout(value: number): Promise<void>;
     public PairableTimeout(value?: number): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'PairableTimeout', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'PairableTimeout');
@@ -156,7 +156,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
     }
 
     //@method({ name: 'SetDiscoveryFilter', inSignature: 'a{sv}', outSignature: '' })
-    public SetDiscoveryFilter(properties: {[key: string]: DBus.Variant}): Promise<void> {
+    public SetDiscoveryFilter(properties: { [key: string]: DBus.Variant }): Promise<void> {
         return this.thisDBusInterface.SetDiscoveryFilter(properties);
     }
 
@@ -178,7 +178,7 @@ export class OrgBluezAdapter1 extends EventEmitter {
 }
 /***** Signals for org.bluez.Adapter1 *****/
 export declare interface OrgBluezAdapter1 {
-    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: {[key:string]: any}, invalidatedProperties: string[]) => void): this;
+    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: { [key: string]: any }, invalidatedProperties: string[]) => void): this;
     on(event: string, listener: Function): this;
 }
 
@@ -200,7 +200,7 @@ export class OrgBluezGattManager1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -211,7 +211,7 @@ export class OrgBluezGattManager1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -227,7 +227,7 @@ export class OrgBluezGattManager1 extends EventEmitter {
     /***** Methods *****/
 
     //@method({ name: 'RegisterApplication', inSignature: 'oa{sv}', outSignature: '' })
-    public RegisterApplication(application: DBus.ObjectPath, options: {[key: string]: DBus.Variant}): Promise<void> {
+    public RegisterApplication(application: DBus.ObjectPath, options: { [key: string]: DBus.Variant }): Promise<void> {
         return this.thisDBusInterface.RegisterApplication(application, options);
     }
 
@@ -239,7 +239,7 @@ export class OrgBluezGattManager1 extends EventEmitter {
 }
 /***** Signals for org.bluez.GattManager1 *****/
 export declare interface OrgBluezGattManager1 {
-    
+
     on(event: string, listener: Function): this;
 }
 
@@ -261,7 +261,7 @@ export class OrgBluezLEAdvertisingManager1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -272,7 +272,7 @@ export class OrgBluezLEAdvertisingManager1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -303,7 +303,7 @@ export class OrgBluezLEAdvertisingManager1 extends EventEmitter {
     /***** Methods *****/
 
     //@method({ name: 'RegisterAdvertisement', inSignature: 'oa{sv}', outSignature: '' })
-    public RegisterAdvertisement(advertisement: DBus.ObjectPath, options: {[key: string]: DBus.Variant}): Promise<void> {
+    public RegisterAdvertisement(advertisement: DBus.ObjectPath, options: { [key: string]: DBus.Variant }): Promise<void> {
         return this.thisDBusInterface.RegisterAdvertisement(advertisement, options);
     }
 
@@ -315,7 +315,7 @@ export class OrgBluezLEAdvertisingManager1 extends EventEmitter {
 }
 /***** Signals for org.bluez.LEAdvertisingManager1 *****/
 export declare interface OrgBluezLEAdvertisingManager1 {
-    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: {[key:string]: any}, invalidatedProperties: string[]) => void): this;
+    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: { [key: string]: any }, invalidatedProperties: string[]) => void): this;
     on(event: string, listener: Function): this;
 }
 
@@ -337,7 +337,7 @@ export class OrgBluezMedia1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -348,7 +348,7 @@ export class OrgBluezMedia1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -364,7 +364,7 @@ export class OrgBluezMedia1 extends EventEmitter {
     /***** Methods *****/
 
     //@method({ name: 'RegisterEndpoint', inSignature: 'oa{sv}', outSignature: '' })
-    public RegisterEndpoint(endpoint: DBus.ObjectPath, properties: {[key: string]: DBus.Variant}): Promise<void> {
+    public RegisterEndpoint(endpoint: DBus.ObjectPath, properties: { [key: string]: DBus.Variant }): Promise<void> {
         return this.thisDBusInterface.RegisterEndpoint(endpoint, properties);
     }
 
@@ -374,7 +374,7 @@ export class OrgBluezMedia1 extends EventEmitter {
     }
 
     //@method({ name: 'RegisterPlayer', inSignature: 'oa{sv}', outSignature: '' })
-    public RegisterPlayer(player: DBus.ObjectPath, properties: {[key: string]: DBus.Variant}): Promise<void> {
+    public RegisterPlayer(player: DBus.ObjectPath, properties: { [key: string]: DBus.Variant }): Promise<void> {
         return this.thisDBusInterface.RegisterPlayer(player, properties);
     }
 
@@ -386,7 +386,7 @@ export class OrgBluezMedia1 extends EventEmitter {
 }
 /***** Signals for org.bluez.Media1 *****/
 export declare interface OrgBluezMedia1 {
-    
+
     on(event: string, listener: Function): this;
 }
 
@@ -408,7 +408,7 @@ export class OrgBluezNetworkServer1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -419,7 +419,7 @@ export class OrgBluezNetworkServer1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -447,7 +447,7 @@ export class OrgBluezNetworkServer1 extends EventEmitter {
 }
 /***** Signals for org.bluez.NetworkServer1 *****/
 export declare interface OrgBluezNetworkServer1 {
-    
+
     on(event: string, listener: Function): this;
 }
 

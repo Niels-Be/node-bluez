@@ -91,7 +91,7 @@ export interface Profile {
         profile, because when this method gets called it has
         already been unregistered.
     */
-   Release?(): Promise<void>;
+    Release?(): Promise<void>;
 
     /*
     void NewConnection(object device, fd, dict fd_properties)
@@ -107,7 +107,7 @@ export interface Profile {
         Possible errors: org.bluez.Error.Rejected
                          org.bluez.Error.Canceled
     */
-    NewConnection(device: Device, fd: number, options: {[name: string]: any}): Promise<void> | void;
+    NewConnection(device: Device, fd: number, options: { [name: string]: any }): Promise<void> | void;
     /*
     void RequestDisconnection(object device)
 

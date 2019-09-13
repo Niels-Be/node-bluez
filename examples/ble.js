@@ -29,8 +29,8 @@ bluetooth.init().then(async () => {
     const adapter = await bluetooth.getAdapter();
     // check if we are already paired with the device we are looking for
     const devices = await adapter.listDevices();
-    for(dev of devices) {
-        if(await dev.Name() === "HM10") {
+    for (dev of devices) {
+        if (await dev.Name() === "HM10") {
             await handleDevice(dev);
             return;
         }
@@ -61,10 +61,10 @@ async function handleDevice(device) {
     if (!props.Connected) {
         console.log("Connecting");
         // try normal connecting first. This might fail, so provide some backup methods
-        await device.Connect().catch(()=>{
+        await device.Connect().catch(() => {
             // also directly connecting to the GATT profile fails for an unknown reason. Maybe a Bluez bug?
             return device.ConnectProfile("0000ffe0-0000-1000-8000-00805f9b34fb");
-        }).catch(()=> {
+        }).catch(() => {
             // connect manually to the device
             return exec("hcitool lecc " + address);
         });

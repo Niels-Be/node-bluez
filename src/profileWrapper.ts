@@ -42,7 +42,7 @@ export class ProfileWrapper extends DBus.interface.Interface {
         Possible errors: org.bluez.Error.Rejected
                          org.bluez.Error.Canceled
     */
-    async NewConnection(device: DBus.ObjectPath, fd: number, options: {[name: string]: any}) {
+    async NewConnection(device: DBus.ObjectPath, fd: number, options: { [name: string]: any }) {
         const dev = await this.bluez.getDeviceFromObject(device);
         return this.impl.NewConnection(dev, fd, options);
     }
@@ -76,6 +76,6 @@ ProfileWrapper.configureMembers({
     methods: {
         Release: {},
         NewConnection: { inSignature: 'oua{sv}' },
-        RequestDisconnection: { inSignature: 'o'},
+        RequestDisconnection: { inSignature: 'o' },
     }
 });

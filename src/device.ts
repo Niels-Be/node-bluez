@@ -7,9 +7,9 @@ export class Device extends OrgBluezDevice1 {
 
     public async getService(uuid: string): Promise<Service> {
         const services = await this.listServices();
-        for(let s of services) {
+        for (let s of services) {
             const serviceUUID = await s.UUID();
-            if(serviceUUID === uuid) {
+            if (serviceUUID === uuid) {
                 return s;
             }
         }

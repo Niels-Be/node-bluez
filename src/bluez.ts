@@ -50,7 +50,7 @@ export class Bluez {
             const path = node.split("/");
             return path[path.length - 1] === name;
         });
-        if(adapterNode === undefined) throw new DBus.DBusError("org.bluez.Error.DoesNotExist", "Adapter not found");
+        if (adapterNode === undefined) throw new DBus.DBusError("org.bluez.Error.DoesNotExist", "Adapter not found");
         return this.getAdapterFromObject(adapterNode);
     }
 
@@ -110,7 +110,7 @@ export class Bluez {
         // register wrapped service
         this.bus.export(this.options.userInterfacesPath, wrappedAgent);
         await this.agentManager.RegisterAgent(this.options.userInterfacesPath, agent.AgentCapabilities);
-        if(requestAsDefault) {
+        if (requestAsDefault) {
             await this.agentManager.RequestDefaultAgent(this.options.userInterfacesPath);
         }
     }

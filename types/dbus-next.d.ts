@@ -19,19 +19,22 @@ declare module 'dbus-next' {
 
         export class Interface {
             constructor(name: string);
-            static configureMembers(members: {properties?: {[key:string]: PropertyOptions}, methods?: {[key:string]: MethodOptions}, signals?: {[key:string]: SignalOptions}}): void;
-         }
+            static configureMembers(members: { properties?: { [key: string]: PropertyOptions }, methods?: { [key: string]: MethodOptions }, signals?: { [key: string]: SignalOptions } }): void;
+        }
         export function property(opts: PropertyOptions): PropertyDecorator;
         export function method(opts: MethodOptions): MethodDecorator;
         export function signal(opts: SignalOptions): MethodDecorator;
     }
-    export class Variant { }
+    export class Variant<T = any> {
+        signature: string;
+        value: T;
+    }
     export class DBusError extends Error {
         type: string;
         text: string;
         reply?: any;
         constructor(type: string, text: string, reply?: any);
-     }
+    }
     export class Message { }
 
     export interface MessageBus {

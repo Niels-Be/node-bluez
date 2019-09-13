@@ -19,7 +19,7 @@ export class OrgBluezDevice1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -30,7 +30,7 @@ export class OrgBluezDevice1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -58,11 +58,11 @@ export class OrgBluezDevice1 extends EventEmitter {
     }
 
     //@property({ name: 'Alias', signature: 's', access: ACCESS_READWRITE })
-    
+
     public Alias(): Promise<string>;
     public Alias(value: string): Promise<void>;
     public Alias(value?: string): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Alias', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Alias');
@@ -90,11 +90,11 @@ export class OrgBluezDevice1 extends EventEmitter {
     }
 
     //@property({ name: 'Trusted', signature: 'b', access: ACCESS_READWRITE })
-    
+
     public Trusted(): Promise<boolean>;
     public Trusted(value: boolean): Promise<void>;
     public Trusted(value?: boolean): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Trusted', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Trusted');
@@ -102,11 +102,11 @@ export class OrgBluezDevice1 extends EventEmitter {
     }
 
     //@property({ name: 'Blocked', signature: 'b', access: ACCESS_READWRITE })
-    
+
     public Blocked(): Promise<boolean>;
     public Blocked(value: boolean): Promise<void>;
     public Blocked(value?: boolean): Promise<any> {
-        if(value !== undefined) {
+        if (value !== undefined) {
             return this.propertiesDBusInterface.Set(this.dbusInterfaceName, 'Blocked', value);
         } else {
             return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'Blocked');
@@ -144,12 +144,12 @@ export class OrgBluezDevice1 extends EventEmitter {
     }
 
     //@property({ name: 'ManufacturerData', signature: 'a{qv}', access: ACCESS_READ })
-    public ManufacturerData(): Promise<{[key: number]: DBus.Variant}> {
+    public ManufacturerData(): Promise<{ [key: number]: DBus.Variant }> {
         return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'ManufacturerData');
     }
 
     //@property({ name: 'ServiceData', signature: 'a{sv}', access: ACCESS_READ })
-    public ServiceData(): Promise<{[key: string]: DBus.Variant}> {
+    public ServiceData(): Promise<{ [key: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.Get(this.dbusInterfaceName, 'ServiceData');
     }
 
@@ -199,7 +199,7 @@ export class OrgBluezDevice1 extends EventEmitter {
 }
 /***** Signals for OrgBluezDevice1 *****/
 export declare interface OrgBluezDevice1 {
-    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: {[key:string]: any}, invalidatedProperties: string[]) => void): this;
+    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: { [key: string]: any }, invalidatedProperties: string[]) => void): this;
     on(event: string, listener: Function): this;
 }
 
@@ -221,7 +221,7 @@ export class OrgBluezMediaControl1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -232,7 +232,7 @@ export class OrgBluezMediaControl1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -305,7 +305,7 @@ export class OrgBluezMediaControl1 extends EventEmitter {
 }
 /***** Signals for OrgBluezMediaControl1 *****/
 export declare interface OrgBluezMediaControl1 {
-    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: {[key:string]: any}, invalidatedProperties: string[]) => void): this;
+    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: { [key: string]: any }, invalidatedProperties: string[]) => void): this;
     on(event: string, listener: Function): this;
 }
 

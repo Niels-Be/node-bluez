@@ -23,7 +23,7 @@ export class OrgBluezGattDescriptor1 extends EventEmitter {
 
         // forward property change events
         this.propertiesDBusInterface.on('PropertiesChanged', (iface: string, changed: any, invalidated: any) => {
-            if(iface === this.dbusInterfaceName) {
+            if (iface === this.dbusInterfaceName) {
                 this.emit('PropertiesChanged', iface, changed, invalidated);
             }
         });
@@ -34,7 +34,7 @@ export class OrgBluezGattDescriptor1 extends EventEmitter {
 
     /***** Properties *****/
 
-    public getProperties(): Promise<{[name: string]: DBus.Variant}> {
+    public getProperties(): Promise<{ [name: string]: DBus.Variant }> {
         return this.propertiesDBusInterface.GetAll(this.dbusInterfaceName);
     }
 
@@ -65,19 +65,19 @@ export class OrgBluezGattDescriptor1 extends EventEmitter {
     /***** Methods *****/
 
     //@method({ name: 'ReadValue', inSignature: 'a{sv}', outSignature: 'ay' })
-    public ReadValue(options: {[key: string]: DBus.Variant}, ): Promise<Buffer> {
-        return this.thisDBusInterface.ReadValue(options, );
+    public ReadValue(options: { [key: string]: DBus.Variant }, ): Promise<Buffer> {
+        return this.thisDBusInterface.ReadValue(options);
     }
 
     //@method({ name: 'WriteValue', inSignature: 'aya{sv}', outSignature: '' })
-    public WriteValue(value: Buffer, options: {[key: string]: DBus.Variant}): Promise<void> {
+    public WriteValue(value: Buffer, options: { [key: string]: DBus.Variant }): Promise<void> {
         return this.thisDBusInterface.WriteValue(value, options);
     }
 
 }
 /***** Signals for org.bluez.GattDescriptor1 *****/
 export declare interface OrgBluezGattDescriptor1 {
-    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: {[key:string]: any}, invalidatedProperties: string[]) => void): this;
+    on(evt: "PropertiesChanged", cb: (iface: string, changedProperties: { [key: string]: any }, invalidatedProperties: string[]) => void): this;
     on(event: string, listener: Function): this;
 }
 

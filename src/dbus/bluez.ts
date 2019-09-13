@@ -22,7 +22,7 @@ export interface OrgBluezAgentManager1 extends DBus.ClientInterface {
 
     /***** Signals *****/
 
-    
+
 }
 
 /**
@@ -36,7 +36,7 @@ export interface OrgBluezProfileManager1 extends DBus.ClientInterface {
     /***** Methods *****/
 
     //@method({ name: 'RegisterProfile', inSignature: 'osa{sv}', outSignature: '' })
-    RegisterProfile(profile: DBus.ObjectPath, UUID: string, options: {[key: string]: DBus.Variant}): Promise<void>;
+    RegisterProfile(profile: DBus.ObjectPath, UUID: string, options: { [key: string]: DBus.Variant }): Promise<void>;
 
     //@method({ name: 'UnregisterProfile', inSignature: 'o', outSignature: '' })
     UnregisterProfile(profile: DBus.ObjectPath): Promise<void>;
@@ -44,7 +44,7 @@ export interface OrgBluezProfileManager1 extends DBus.ClientInterface {
 
     /***** Signals *****/
 
-    
+
 }
 
 

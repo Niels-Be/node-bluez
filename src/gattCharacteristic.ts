@@ -3,12 +3,12 @@ import { OrgBluezGattCharacteristic1 } from "./dbus/characteristic";
 import { Descriptor } from "./gattDescriptor";
 
 export class Characteristic extends OrgBluezGattCharacteristic1 {
-    
+
     public async getDescriptor(uuid: string): Promise<Descriptor> {
         const services = await this.listDescriptors();
-        for(let s of services) {
+        for (let s of services) {
             const serviceUUID = await s.UUID();
-            if(serviceUUID === uuid) {
+            if (serviceUUID === uuid) {
                 return s;
             }
         }

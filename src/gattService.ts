@@ -3,12 +3,12 @@ import { DBusError } from "dbus-next";
 import { Characteristic } from "./gattCharacteristic";
 
 export class Service extends OrgBluezGattService1 {
-    
+
     public async getCharacteristic(uuid: string): Promise<Characteristic> {
         const services = await this.listCharacteristics();
-        for(let s of services) {
+        for (let s of services) {
             const serviceUUID = await s.UUID();
-            if(serviceUUID === uuid) {
+            if (serviceUUID === uuid) {
                 return s;
             }
         }
