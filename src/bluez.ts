@@ -15,6 +15,7 @@ export interface BluezOptions {
 
 export class Bluez {
 
+    private bus: DBus.MessageBus;
     private options: BluezOptions;
     private objectManager: OrgFreedesktopDBusObjectManager;
     private agentManager: OrgBluezAgentManager1;
@@ -22,30 +23,29 @@ export class Bluez {
     private bluezRootObject: DBus.ProxyObject;
 
     constructor(options?: Partial<BluezOptions>) {
+        this.bus = options && options.bus ? options.bus : DBus.systemBus();
         this.options = Object.assign({
-            bus: options && options.bus ? options.bus : DBus.systemBus(),
-            userInterfacesPath: "/"
+            bus: this.bus,
+            userInterfacesPath: "/",
         }, options);
     }
 
     public async init() {
-        const rootObject = await this.options.bus.getProxyObject("org.bluez", "/");
+        const rootObject = await this.bus.getProxyObject("org.bluez", "/");
         this.objectManager = rootObject.getInterface<OrgFreedesktopDBusObjectManager>("org.freedesktop.DBus.ObjectManager");
-        this.bluezRootObject = await this.options.bus.getProxyObject("org.bluez", "/org/bluez");
+        this.bluezRootObject = await this.bus.getProxyObject("org.bluez", "/org/bluez");
         this.agentManager = this.bluezRootObject.getInterface<OrgBluezAgentManager1>("org.bluez.AgentManager1");
         this.profileManager = this.bluezRootObject.getInterface<OrgBluezProfileManager1>("org.bluez.ProfileManager1");
-/*
-        this.objectManager.on('InterfacesAdded', this.onInterfacesAdded.bind(this));
-        this.objectManager.on('InterfacesRemoved', this.onInterfaceRemoved.bind(this));
-        const existingObjects = await this.objectManager.GetManagedObjects();
-        Object.keys(existingObjects).forEach((k) => this.onInterfacesAdded(k, objs[k]));*/
     }
 
     public getBus(): DBus.MessageBus {
-        return this.options.bus;
+        return this.bus;
+    }
+    public getObjectManager(): OrgFreedesktopDBusObjectManager {
+        return this.objectManager;
     }
 
-    public async getAdapter(name: string = "hci0"): Promise<Adapter> {
+    public getAdapter(name: string = "hci0"): Promise<Adapter> {
         const adapterNode = this.bluezRootObject.nodes.find(node => {
             const path = node.split("/");
             return path[path.length - 1] === name;
@@ -60,23 +60,55 @@ export class Bluez {
         }));
     }
 
-
+    /*
+    This registers a profile implementation.
+    If an application disconnects from the bus all
+    its registered profiles will be removed.
+    HFP HS UUID: 0000111e-0000-1000-8000-00805f9b34fb
+        Default RFCOMM channel is 6. And this requires
+        authentication.
+    Possible errors: org.bluez.Error.InvalidArguments
+                        org.bluez.Error.AlreadyExists
+    */
     public registerProfile(profile: Profile) {
         const wrappedProfile = new ProfileWrapper(profile, this);
-        //TODO: check if we need to call request name first
         // register wrapped service
-        this.options.bus.export(this.options.userInterfacesPath, wrappedProfile);
-        
+        this.bus.export(this.options.userInterfacesPath, wrappedProfile);
         return this.profileManager.RegisterProfile(this.options.userInterfacesPath, profile.UUID, profile.ProfileOptions);
     }
     public unregisterProfile(profile: Profile) {
         return this.profileManager.UnregisterProfile(this.options.userInterfacesPath);
     }
 
+    /*
+    This registers an agent handler.
+    The object path defines the path of the agent
+    that will be called when user input is needed.
+    Every application can register its own agent and
+    for all actions triggered by that application its
+    agent is used.
+    It is not required by an application to register
+    an agent. If an application does chooses to not
+    register an agent, the default agent is used. This
+    is on most cases a good idea. Only application
+    like a pairing wizard should register their own
+    agent.
+    An application can only register one agent. Multiple
+    agents per application is not supported.
+    The capability parameter can have the values
+    "DisplayOnly", "DisplayYesNo", "KeyboardOnly",
+    "NoInputNoOutput" and "KeyboardDisplay" which
+    reflects the input and output capabilities of the
+    agent.
+    If an empty string is used it will fallback to
+    "KeyboardDisplay".
+    Possible errors: org.bluez.Error.InvalidArguments
+                org.bluez.Error.AlreadyExists
+    */
     public async registerAgent(agent: Agent, requestAsDefault?: boolean) {
         const wrappedAgent = new AgentWrapper(agent, this);
-        //TODO: check if we need to call request name frist
-        this.options.bus.export(this.options.userInterfacesPath, wrappedAgent);
+        // register wrapped service
+        this.bus.export(this.options.userInterfacesPath, wrappedAgent);
         await this.agentManager.RegisterAgent(this.options.userInterfacesPath, agent.AgentCapabilities);
         if(requestAsDefault) {
             await this.agentManager.RequestDefaultAgent(this.options.userInterfacesPath);
@@ -89,12 +121,14 @@ export class Bluez {
 
     // internal methods
     public async getAdapterFromObject(object: DBus.ObjectPath) {
-        const obj = await this.options.bus.getProxyObject("org.bluez", object);
-        return new Adapter(obj);
+        const obj = await this.bus.getProxyObject("org.bluez", object);
+        const adapter = new Adapter(obj, this);
+        //TODO: cache adapter list
+        return adapter;
     }
 
     public async getDeviceFromObject(object: DBus.ObjectPath) {
-        const obj = await this.options.bus.getProxyObject("org.bluez", object);
+        const obj = await this.bus.getProxyObject("org.bluez", object);
         return new Device(obj);
     }
 }
