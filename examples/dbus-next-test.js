@@ -1,14 +1,14 @@
-import { Bluez } from "../src/bluez";
-import * as DBus from 'dbus-next';
+const Bluez = require(".."); // require('bluez')
+const DBus = require('dbus-next');
 
 const bus = DBus.systemBus();
 
-function delay(delay: number) {
+function delay(delay) {
     return new Promise((resolve) => setTimeout(resolve, delay));
 }
 
 async function run() {
-    const bluez = new Bluez({bus: bus});
+    const bluez = new Bluez({ bus: bus });
     await bluez.init();
 
     const adapter = await bluez.getAdapter();
@@ -20,4 +20,4 @@ async function run() {
     await adapter.StopDiscovery();
 }
 
-run().catch(console.error).then(()=>bus.disconnect());
+run().catch(console.error).then(() => bus.disconnect());
