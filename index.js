@@ -1,17 +1,17 @@
 
-const Bluez = require('./lib/Bluez');
+const Bluez = require('./dist/Bluez').Bluez;
 
 
-Bluez.Adapter = require('./lib/Adapter');
-Bluez.Agent = require('./lib/Agent');
+Bluez.Adapter = require('./dist/adapter').Adapter;
+//Bluez.Agent = require('./dist/agent').Agent;
 Bluez.Bluez = Bluez;
-Bluez.Device = require('./lib/Device');
-Bluez.Profile = require('./lib/Profile');
-Bluez.SerialProfile = require('./lib/SerialProfile');
-Bluez.RawFdSocket = require('./lib/RawFdSocket');
+Bluez.Device = require('./dist/device').Device;
+//Bluez.Profile = require('./dist/profile').Profile;
+//Bluez.SerialProfile = require('./dist/SerialProfile');
+//Bluez.RawFdSocket = require('./dist/RawFdSocket');
 
-Bluez.Service = require('./lib/Service');
-Bluez.Characteristic = require('./lib/Characteristic');
-Bluez.Descriptor = require('./lib/Descriptor');
+Bluez.Service = require('./dist/gattService').Service;
+Bluez.Characteristic = require('./dist/gattCharacteristic').Characteristic;
+Bluez.Descriptor = require('./dist/gattDescriptor').Descriptor;
 
 module.exports = Bluez;
