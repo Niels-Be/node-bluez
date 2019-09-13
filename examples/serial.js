@@ -1,12 +1,44 @@
-const Bluez = require('../index');
+const Bluez = require('..');
+let BluetoothSocket;
+try {
+    BluetoothSocket = require('bluetooth-socket');
+} catch(err) {
+    if(err.message === "Cannot find module 'bluetooth-socket'") {
+        console.error("ERROR: " + err.message);
+        console.error("This example requires 'bluetooth-socket' module.");
+        console.error("Please install it via 'npm install bluetooth-socket");
+        process.exit(1);
+    } else throw err;
+}
 
 const bluetooth = new Bluez();
 
-// Register callback for new devices
-bluetooth.on('device', async (address, props) => {
+const SerialProfile = {
+    ProfileOptions: {
+        Name: "Node Serial Port",
+        Role: "client",
+        PSM: 0x0003
+    },
+    // Bluetooth SSP uuid
+    UUID: "00001101-0000-1000-8000-00805f9b34fb",
+
+    NewConnection: async function(device, fd, options) {
+        const name = await device.Name();
+        console.log("Serial Connection from " + name);
+        // Get a socket from the RFCOMM FD
+        const socket = new BluetoothSocket(fd);
+        // The socket is a standard nodejs duplex stream.
+        // Now you can communicate with the device like it was a network socket
+        socket.on("data", (data) => console.log(data));
+        socket.write("Hello World!\n");
+    }
+}
+
+// callback for discovered devices
+async function discoverDevice(address, props) {
     console.log("Found new Device " + address + " " + props.Name);
     // apply some filtering
-    if(props.Name !== "Xperia Z") return;
+    if(props.Name !== "HC05") return false;
     
     // Get the device interface
     const device = await bluetooth.getDevice(address);
@@ -19,33 +51,34 @@ bluetooth.on('device', async (address, props) => {
         });
     }
     // Connect to the Serial Service
-    await device.ConnectProfile(Bluez.SerialProfile.uuid).catch((err)=>{
+    await device.ConnectProfile(SerialProfile.uuid).catch((err)=>{
         console.error("Error while connection to device " + address + ": " + err.message);
     });
-});
+    return true;
+};
 
 bluetooth.init().then(async ()=>{
 
     // Register Agent that accepts everything and uses key 1234
-    await bluetooth.registerDummyAgent();
+    await bluetooth.registerAgent(new SimpleAgent("1234"), true);
     console.log("Agent registered");
     
-    // Register a Serial Client Service
-    await bluetooth.registerSerialProfile(async (device, socket) => {
-        const name = await device.Name();
-        console.log("Serial Connection from " + name);
-        // socket is a non blocking duplex stream similar to net.Socket
-        // Print everything
-        socket.pipe(process.stdout);
-        //socket.on('data', (data)=>process.stdout.write(data));
-        socket.on('error', console.error);
-        // Send hello to device
-        socket.write("Hello\n");
-    }, "client");
+    // Register the Serial Client Service
+    await bluetooth.registerProfile(SerialProfile);
     console.log("SerialProfile registered");
     
     // listen on first bluetooth adapter
-    const adapter = await bluetooth.getAdapter('hci0');
+    const adapter = await bluetooth.getAdapter();
+    // check if we are already paired with the device we are looking for
+    const devices = await adapter.listDevices();
+    for(dev of devices) {
+        const props = await dev.getProperties();
+        if(await discoverDevice(props.Address, props))
+            return;
+    }
+
+    // otherwise start discovery
+    adapter.on("DeviceAdded", discoverDevice);
     await adapter.StartDiscovery();
     console.log("Discovering");
-});
+}).catch(console.error);

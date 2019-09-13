@@ -11,29 +11,6 @@ function delay(ms) {
 }
 
 const bluetooth = new Bluez();
-let adapter;
-
-class BluezAgent extends Bluez.Agent {
-    constructor(bluez, DbusObject, pin) {
-        super(bluez, DbusObject);
-        this.pin = pin;
-    }
-
-    Release(callback) {
-        console.log("Agent Disconnected");
-        callback();
-    }
-
-    RequestPinCode(device, callback) {
-        console.log("Send pass");
-        callback(null, this.pin);
-    }
-
-    RequestPasskey(device, callback) {
-        console.log("Send pin");
-        callback(null, parseInt(this.pin));
-    }
-}
 
 // Register callback for new devices
 bluetooth.on('device', (address, props) => {
@@ -45,15 +22,28 @@ bluetooth.on('device', (address, props) => {
 bluetooth.init().then(async () => {
 
     // Register Agent that accepts everything and uses key 1234
-    await bluetooth.registerAgent(
-        new BluezAgent(bluetooth, bluetooth.getUserServiceObject(), "1234"),
-        "KeyboardDisplay",
-        true // since we are using hcitool we need to be registerd globally
-    );
+    await bluetooth.registerAgent(new Bluez.SimpleAgent("1234"), true);
     console.log("Agent registered");
 
     // listen on first bluetooth adapter
-    adapter = await bluetooth.getAdapter('hci0');
+    const adapter = await bluetooth.getAdapter();
+    // check if we are already paired with the device we are looking for
+    const devices = await adapter.listDevices();
+    for(dev of devices) {
+        if(await dev.Name() === "HM10") {
+            await handleDevice(dev);
+            return;
+        }
+    }
+
+    // otherwise start discovery
+    adapter.on("DeviceAdded", (address, props) => {
+        if (props.Name !== "HM10") return;
+        adapter.getDevice(address)
+            .then(handleDevice)
+            .then(adapter.StopDiscovery())
+            .catch(console.error);
+    });
     await adapter.StartDiscovery();
     console.log("Discovering");
 });
@@ -64,11 +54,10 @@ process.on("SIGINT", () => {
 });
 
 
-async function handleDevice(address, props) {
-    console.log("Found new Device " + address + " " + props.Name);
+async function handleDevice(device) {
+    const props = await device.getProperties();
+    console.log("Found new Device " + props.Address + " " + props.Name);
 
-    // Get the device interface
-    const device = await bluetooth.getDevice(address);
     if (!props.Connected) {
         console.log("Connecting");
         // try normal connecting first. This might fail, so provide some backup methods
@@ -98,39 +87,41 @@ async function handleDevice(address, props) {
     const characteristic = service.getCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
     if (!characteristic) return console.log("No Characteristic");
 
-    // on old Bluez versions < 5.48 AcquireNotify and AcquireWrite are not available
-    // if thats the case use handleComOld
-    await handleCom(device, characteristic);
-    //await handleComOld(device, characteristic);
-
-    if (adapter)
-        await adapter.StopDiscovery().catch(() => { });
+    // on new Bluez versions > 5.48 the more efficient AcquireNotify and AcquireWrite are available
+    // if thats the case use handleCom
+    //await handleCom(device, characteristic);
+    await handleComOld(device, characteristic);
 }
 
+// Handle Communication for Bluez > 5.48
 async function handleCom(device, characteristic) {
+    const BluetoothSocket = require('bluetooth-socket');
     // get a notification socket
-    const not = await characteristic.AcquireNotify();
-    not.on("data", async (data) => {
+    const notifierFd, _1 = await characteristic.AcquireNotify();
+    const notifier = new BluetoothSocket(notifierFd);
+    notifier.on("data", async (data) => {
         console.log("Read: " + data.toString());
 
         // end program on recv
-        not.end();
+        notifier.end();
         await device.Disconnect();
         bluetooth.bus.disconnect();
     });
 
     // get a write socket
-    const writer = await characteristic.AcquireWrite();
+    const writerFd, _2 = await characteristic.AcquireWrite();
+    const writer = new BluetoothSocket(writerFd);
     console.log("Send: Test123");
     writer.write("Test123");
     writer.end();
 }
 
+
 async function handleComOld(device, characteristic) {
     // get a notification socket
     await characteristic.StartNotify();
-    characteristic.on("notify", async (value) => {
-        console.log("Read: " + value);
+    characteristic.on("PropertiesChanged", async (intf, props, opts) => {
+        console.log("Read: " + props.Value.value.toString('binary'));
 
         await characteristic.StopNotify();
         // end program on recv
