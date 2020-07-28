@@ -16,7 +16,7 @@ declare class Bluez extends NodeJS.EventEmitter {
     registerAgent(agent: Bluez.Agent, capabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay", requestAsDefault?: boolean): Promise<void>;
     registerDummyAgent(requestAsDefault?: boolean): Promise<void>;
     registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
-    registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.RawFdSocket) => void, mode?: string, options?: stream.DuplexOptions): Promise<void>;
+    registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.BluetoothSocket) => void, mode?: string, options?: stream.DuplexOptions): Promise<void>;
 
     on(event: "device", listener: (address: string, props: any) => void): this;
     on(event: "error", listener: (error: Error) => void): this;
@@ -106,9 +106,9 @@ declare namespace Bluez {
     class Characteristic extends NodeJS.EventEmitter {
         getDescriptor(uuid: string): Descriptor | undefined;
         ReadValue(options?: any): Promise<Buffer>;
-        WriteValue(value: number[], options?: any): Promise<void>;
-        AcquireWrite(options?: any): Promise<RawFdSocket>;
-        AcquireNotify(options?: any): Promise<RawFdSocket>;
+        WriteValue(value: Buffer|number[], options?: any): Promise<void>;
+        AcquireWrite(options?: any): Promise<BluetoothSocket>;
+        AcquireNotify(options?: any): Promise<BluetoothSocket>;
         StartNotify(): Promise<void>;
         StopNotify(): Promise<void>;
 
@@ -118,13 +118,13 @@ declare namespace Bluez {
         getProperty(name: string): Promise<any>;
         setProperty(name: string, value: any): Promise<void>;
 
-        readonly UUID: Promise<string>;
-        readonly Service: Promise<string>;
-        readonly Value: Promise<number[]>;
-        readonly WriteAcquired: Promise<boolean>;
-        readonly NotifyAcquired: Promise<boolean>;
-        readonly Notifying: Promise<boolean>;
-        readonly Flags: Promise<string[]>;
+        UUID(): Promise<string>;
+        Service(): Promise<string>;
+        Value(): Promise<Buffer>;
+        WriteAcquired(): Promise<boolean>;
+        NotifyAcquired(): Promise<boolean>;
+        Notifying(): Promise<boolean>;
+        Flags(): Promise<string[]>;
     }
     class Descriptor {
         //TODO: properties
@@ -143,9 +143,6 @@ declare namespace Bluez {
         public Release(callback: Function): void;
         public RequestDisconnection(device: string, callback: Function): void;
     }
-    class RawFdSocket extends stream.Duplex {
-        constructor(fd: number, options?: stream.DuplexOptions);
-    }
     class SerialProfile extends Profile {
         public static uuid: string;
         protected listener: Function;
@@ -153,6 +150,7 @@ declare namespace Bluez {
         public constructor(...args: any[]);
         public NewConnection(device: string, fd: number, options: any, callback: Function): void;
     }
+    class BluetoothSocket extends stream.Duplex {}
 }
 
 export = Bluez;
