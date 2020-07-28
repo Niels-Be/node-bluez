@@ -8,7 +8,6 @@ Bluez.Bluez = Bluez;
 Bluez.Device = require('./lib/Device');
 Bluez.Profile = require('./lib/Profile');
 Bluez.SerialProfile = require('./lib/SerialProfile');
-Bluez.RawFdSocket = require('./lib/RawFdSocket');
 
 Bluez.Service = require('./lib/Service');
 Bluez.Characteristic = require('./lib/Characteristic');
