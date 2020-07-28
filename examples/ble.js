@@ -1,8 +1,4 @@
 const Bluez = require('..');
-const child_process = require("child_process");
-const { promisify } = require('util');
-
-const exec = promisify(child_process.exec);
 
 function delay(ms) {
     return new Promise((resolve, reject) => {
@@ -26,19 +22,21 @@ class BluezAgent extends Bluez.Agent {
 
     RequestPinCode(device, callback) {
         console.log("Send pass");
-        callback(null, this.pin);
+        callback(null, this.pin.toString());
     }
 
     RequestPasskey(device, callback) {
         console.log("Send pin");
-        callback(null, parseInt(this.pin));
+        callback(null, parseInt(this.pin, 10));
     }
 }
 
+let deviceFound = false;
 // Register callback for new devices
 bluetooth.on('device', (address, props) => {
     // apply some filtering
     if (props.Name !== "HM10") return;
+    deviceFound = true;
     handleDevice(address, props).catch(console.error);
 });
 
@@ -47,15 +45,16 @@ bluetooth.init().then(async () => {
     // Register Agent that accepts everything and uses key 1234
     await bluetooth.registerAgent(
         new BluezAgent(bluetooth, bluetooth.getUserServiceObject(), "1234"),
-        "KeyboardDisplay",
-        true // since we are using hcitool we need to be registerd globally
+        "KeyboardOnly",
     );
     console.log("Agent registered");
 
     // listen on first bluetooth adapter
     adapter = await bluetooth.getAdapter('hci0');
-    await adapter.StartDiscovery();
-    console.log("Discovering");
+    if(!deviceFound) {
+        await adapter.StartDiscovery();
+        console.log("Discovering");
+    }
 });
 
 process.on("SIGINT", () => {
@@ -72,12 +71,9 @@ async function handleDevice(address, props) {
     if (!props.Connected) {
         console.log("Connecting");
         // try normal connecting first. This might fail, so provide some backup methods
-        await device.Connect().catch(()=>{
+        await device.Connect().catch(() => {
             // also directly connecting to the GATT profile fails for an unknown reason. Maybe a Bluez bug?
             return device.ConnectProfile("0000ffe0-0000-1000-8000-00805f9b34fb");
-        }).catch(()=> {
-            // connect manually to the device
-            return exec("hcitool lecc " + address);
         });
     }
 
@@ -105,18 +101,18 @@ async function handleDevice(address, props) {
 
     if (adapter)
         await adapter.StopDiscovery().catch(() => { });
+
+    await device.Disconnect();
+    bluetooth.bus.disconnect();
 }
 
 async function handleCom(device, characteristic) {
+    let hasRead = false;
     // get a notification socket
     const not = await characteristic.AcquireNotify();
     not.on("data", async (data) => {
-        console.log("Read: " + data.toString());
-
-        // end program on recv
-        not.end();
-        await device.Disconnect();
-        bluetooth.bus.disconnect();
+        console.log("Read: ", data.toString());
+        hasRead = true;
     });
 
     // get a write socket
@@ -124,23 +120,22 @@ async function handleCom(device, characteristic) {
     console.log("Send: Test123");
     writer.write("Test123");
     writer.end();
+    while(!hasRead) await delay(100);
+    not.end();
 }
 
 async function handleComOld(device, characteristic) {
+    let hasRead = false;
     // get a notification socket
     await characteristic.StartNotify();
-    characteristic.on("notify", async (value) => {
-        console.log("Read: " + value);
-
-        await characteristic.StopNotify();
-        // end program on recv
-        await device.Disconnect();
-        bluetooth.bus.disconnect();
+    characteristic.on("notify", (data) => {
+        console.log("Read: ", data.toString());
+        hasRead = true;
     });
-    //const props = await characteristic.getProperties();
-    //check for props.Notifying
 
     // get a write socket
     console.log("Send: Test123");
     await characteristic.WriteValue([...Buffer.from("Test123")]);
+    while(!hasRead) await delay(100);
+    await characteristic.StopNotify();
 }

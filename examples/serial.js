@@ -1,4 +1,4 @@
-const Bluez = require('../index');
+const Bluez = require('..');
 
 const bluetooth = new Bluez();
 
@@ -6,7 +6,7 @@ const bluetooth = new Bluez();
 bluetooth.on('device', async (address, props) => {
     console.log("Found new Device " + address + " " + props.Name);
     // apply some filtering
-    if(props.Name !== "Xperia Z") return;
+    if(props.Name !== "HC05") return;
     
     // Get the device interface
     const device = await bluetooth.getDevice(address);
