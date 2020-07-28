@@ -43,6 +43,15 @@ Then use `bluez.registerAgent(agent, capability)` and `bluez.registerProfile(pro
 
 Have a look at the [examples](examples) for more detailed usage information.
 
+## Migration
+
+#### 0.3.x -> 0.4
+
+- Characteristic Values are now always `Buffers`
+- Characteristic, Descriptor and Service properties where changed to functions
+- RawFdSocket was removed and replaced by optional [bluetooth-socket](https://github.com/waeco/node-bluetooth-socket) module
+  Make sure to install it if you are using SerialPortProfile or Characteristic.AcquireRead / AcquireWrite
+
 ## API
 
 #### Bluez
@@ -90,7 +99,7 @@ Note that for paired devices this will be emitted no matter if the devices are i
 
 #### Adapter
 
-A Adapter represents a local Bluetooth adapter.
+An Adapter represents a local Bluetooth adapter.
 
 ##### `constructor(interface: DBus.Interface): Adapter`
 
@@ -103,7 +112,7 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 #### Agent
 
-A Agent is required for pairing with devices.
+An Agent is required for pairing with devices.
 
 This default implementation accepts every pair request and has the passkey `1234`
 
@@ -132,7 +141,7 @@ Get a GATT Service of the Device.
 
 
 
-##### Service
+#### Service
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
@@ -140,7 +149,7 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 Get a GATT Characteristic of the Service.
 
-##### Characteristic
+#### Characteristic
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
@@ -148,7 +157,7 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 Get a GATT Descriptor of the Characteristic.
 
-##### Descriptor
+#### Descriptor
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
@@ -162,12 +171,7 @@ A Profile is a service provided by this Bluetooth device.
 
 *DBusObject* is the DBus Object under witch the interface should be registerd.
 
-
-##### `get uuid: string`
-
-returns the service UUID.
-
-For other available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/profile-api.txt).
+For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/profile-api.txt).
 
 #### SerialProfile
 
@@ -176,13 +180,6 @@ A Profile implementation for Serial communication.
 ##### `constructor(bluez: Bluez, DBusObject: DBus.ServiceObject, listener: (device: Device, socket: RawFdSocket)=>void): SerialProfile`
 
 *listener* is a callback that is called for each new connection to the Profile. Its *socket* parameter is the established channel between the two devices.
-
-#### RawFdSocket
-
-A [`stream.Duplex`](https://nodejs.org/docs/latest-v8.x/api/stream.html#stream_class_stream_duplex) implementation similar to `net.Socket` that is able to use *RFCOMM* sockets provieded by `NewConnection` callback of Profiles.
-
-##### `constructor(fd: int, options: stream.Duplex.options): RawFdSocket`
-
 
 
 ## TODO
