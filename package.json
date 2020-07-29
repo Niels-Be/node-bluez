@@ -18,10 +18,8 @@
   "license": "MIT",
   "homepage": "https://github.com/waeco/node-bluez#readme",
   "dependencies": {
+    "bluetooth-socket": "^0.1.2",
     "dbus": "^1.0.5"
-  },
-  "peerDependencies": {
-    "bluetooth-socket": "^0.1.2"
   },
   "repository": {
     "type": "git",
