@@ -10,6 +10,7 @@ declare class Bluez extends NodeJS.EventEmitter {
     });
     getAdapter(dev: string): Promise<Bluez.Adapter>;
     getDevice(address: string): Promise<Bluez.Device>;
+    getAllDevicesAddresses(): string[];
     getUserService(): any;
     getUserServiceObject(): any;
     init(): Promise<void>;
@@ -18,7 +19,7 @@ declare class Bluez extends NodeJS.EventEmitter {
     registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
     registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.BluetoothSocket) => void, mode?: string, options?: stream.DuplexOptions): Promise<void>;
 
-    on(event: "device", listener: (address: string, props: any) => void): this;
+    on(event: "device", listener: (address: string, props: Bluez.DeviceProps) => void): this;
     on(event: "error", listener: (error: Error) => void): this;
 }
 declare namespace Bluez {
@@ -60,6 +61,28 @@ declare namespace Bluez {
         RequestPasskey(...args: any[]): void;
         RequestPinCode(...args: any[]): void;
     }
+    interface DeviceProps {
+        Adapter: any;
+        Address: string;
+        AdvertisingFlags?: any;
+        Alias: string;
+        Appearance?: number;
+        Blocked: boolean;
+        Class?: number;
+        Connected: boolean;
+        Icon?: string;
+        LegacyPairing: boolean;
+        ManufacturerData?: any;
+        Modalias?: string;
+        Name?: string;
+        Paired: boolean;
+        RSSI?: number;
+        ServiceData?: any;
+        ServicesResolved: boolean;
+        Trusted: boolean;
+        TxPower?: number;
+        UUIDs?: string[];
+    }
     class Device {
         constructor(...args: any[]);
         Connect(): Promise<void>;
@@ -68,30 +91,32 @@ declare namespace Bluez {
         DisconnectProfile(uuid: string): Promise<void>;
         Pair(): Promise<void>;
         CancelPairing(): Promise<void>;
-        
-        getProperties(): Promise<any>;
+
+        getProperties(): Promise<DeviceProps>;
+        getProperty<T extends keyof DeviceProps>(name: T): Promise<DeviceProps[T]>;
         getProperty(name: string): Promise<any>;
+        setProperty<T extends keyof DeviceProps>(name: T, value: DeviceProps[T]): Promise<void>;
         setProperty(name: string, value: any): Promise<void>;
-        
+
         Adapter(): Promise<any>;
         Address(): Promise<string>;
         AdvertisingFlags(): Promise<any>;
         Alias(): Promise<string>;
-        Appearance(): Promise<any>;
+        Appearance(): Promise<number>;
         Blocked(): Promise<boolean>;
-        Class(): Promise<any>;
+        Class(): Promise<number>;
         Connected(): Promise<boolean>;
-        Icon(): Promise<any>;
+        Icon(): Promise<string>;
         LegacyPairing(): Promise<boolean>;
         ManufacturerData(): Promise<any>;
-        Modalias(): Promise<any>;
+        Modalias(): Promise<string>;
         Name(): Promise<string>;
         Paired(): Promise<boolean>;
-        RSSI(): Promise<any>;
+        RSSI(): Promise<number>;
         ServiceData(): Promise<any>;
         ServicesResolved(): Promise<boolean>;
         Trusted(): Promise<boolean>;
-        TxPower(): Promise<any>;
+        TxPower(): Promise<number>;
         UUIDs(): Promise<string[]>;
 
         getService(uuid: string): Service | undefined;
@@ -106,7 +131,7 @@ declare namespace Bluez {
     class Characteristic extends NodeJS.EventEmitter {
         getDescriptor(uuid: string): Descriptor | undefined;
         ReadValue(options?: any): Promise<Buffer>;
-        WriteValue(value: Buffer|number[], options?: any): Promise<void>;
+        WriteValue(value: Buffer | number[], options?: any): Promise<void>;
         AcquireWrite(options?: any): Promise<BluetoothSocket>;
         AcquireNotify(options?: any): Promise<BluetoothSocket>;
         StartNotify(): Promise<void>;
@@ -150,7 +175,7 @@ declare namespace Bluez {
         public constructor(...args: any[]);
         public NewConnection(device: string, fd: number, options: any, callback: Function): void;
     }
-    class BluetoothSocket extends stream.Duplex {}
+    class BluetoothSocket extends stream.Duplex { }
 }
 
 export = Bluez;
