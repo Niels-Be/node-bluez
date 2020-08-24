@@ -15,7 +15,7 @@ declare class Bluez extends NodeJS.EventEmitter {
     getUserServiceObject(): any;
     init(): Promise<void>;
     registerAgent(agent: Bluez.Agent, capabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay", requestAsDefault?: boolean): Promise<void>;
-    registerDummyAgent(requestAsDefault?: boolean): Promise<void>;
+    registerStaticKeyAgent(pin: number | string, requestAsDefault?: boolean): Promise<void>;
     registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
     registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.BluetoothSocket) => void, mode?: string, options?: stream.DuplexOptions): Promise<void>;
 

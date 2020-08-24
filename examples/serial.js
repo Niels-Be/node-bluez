@@ -15,7 +15,7 @@ bluetooth.on('device', (address, props) => {
 bluetooth.init().then(async () => {
 
     // Register Agent that accepts everything and uses key 1234
-    await bluetooth.registerDummyAgent();
+    await bluetooth.registerStaticKeyAgent("1234");
     console.log("Agent registered");
 
     // Register a Serial Client Service
@@ -48,11 +48,13 @@ async function connectToDevice(address, props) {
     if (!props.Paired) {
         await device.Pair().catch((err) => {
             console.error("Error while pairing to device " + address + ": " + err.message);
+            throw null;
         });
     }
     // Connect to the Serial Service
     await device.ConnectProfile(Bluez.SerialProfile.uuid).catch((err) => {
         console.error("Error while connecting to device " + address + ": " + err.message);
+        throw null;
     });
     console.log("Connected");
 }

@@ -49,8 +49,8 @@ Have a look at the [examples](examples) for more detailed usage information.
 
 - Characteristic Values are now always `Buffers`
 - Characteristic, Descriptor and Service properties where changed to functions
-- RawFdSocket was removed and replaced by optional [bluetooth-socket](https://github.com/waeco/node-bluetooth-socket) module
-  Make sure to install it if you are using SerialPortProfile or Characteristic.AcquireRead / AcquireWrite
+- RawFdSocket was removed and replaced by [bluetooth-socket](https://github.com/waeco/node-bluetooth-socket) module
+- `Bluez.registerDummyAgent` was renamed to `Bluez.registerStaticKeyAgent` which takes a pin code as argument
 
 ## API
 
