@@ -7,7 +7,7 @@ Easy to use Node.js Bluez5 D-Bus library.
 
 ## Install
 
-Required Packages:
+Required Packages for [dbus](https://github.com/Shouqun/node-dbus):
 - libglib2.0-dev
 - libdbus-1-dev
 
@@ -19,14 +19,12 @@ npm install bluez
 
 ```js
 const Bluez = require('bluez');
-
 const bluetooth = new Bluez();
 
 // Register callback for new devices
 bluetooth.on('device', async (address, props) => {
     console.log("[NEW] Device:", address, props.Name);
-    const dev = await bluetooth.getDevice(address).catch(console.error);
-    if (!dev) return;
+    const dev = await bluetooth.getDevice(address);
     dev.on("PropertiesChanged", (props) => {
         console.log("[CHG] Device:", address, props);
     });
@@ -43,9 +41,26 @@ bluetooth.init().then(async () => {
 Custom Agents and Profiles can be implemented by extending Agent / Profile base classes.
 Then use `bluez.registerAgent(agent, capability)` and `bluez.registerProfile(profile, options)` to activate them.
 
+#### Permissions
+
+Make sure the user that is running the node process has the necessary permissions for Bluetooth and System-DBus.
+- on some Systems there is a `bluetooth` group.
+- also check AppArmor and Polkit permissions.
+
 #### Examples
 
 Have a look at the [examples](examples) for more detailed usage information.
+
+#### Tested with
+
+- Bluez 5.50 Ubuntu 18.04
+- Bluez 5.53 Ubuntu 20.04
+- Bluez 5.48 Debian Stretch
+- Bluez 5.50 Debian Buster
+- Bluez 5.54 Debian Sid
+
+Older Bluez version should work, but might miss some functions.
+However I can not recommend using GATT with Bluez < 5.48.
 
 ## Migration
 
@@ -58,6 +73,8 @@ Have a look at the [examples](examples) for more detailed usage information.
 - `Bluez.getAllDevicesAddresses` was renamed to `Bluez.getAllDevicesProps` which returns all properties not only the address.
 
 ## API
+
+This package mostly reflects the Bluez-DBus API. You can find its documentation [here](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/).
 
 #### Bluez
 
