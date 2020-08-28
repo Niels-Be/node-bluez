@@ -5,6 +5,7 @@ const Bluez = require('./lib/Bluez');
 Bluez.Adapter = require('./lib/Adapter');
 Bluez.Agent = require('./lib/Agent');
 Bluez.StaticKeyAgent = require('./lib/StaticKeyAgent');
+Bluez.SimplePairingAgent = require('./lib/SimplePairingAgent');
 Bluez.Bluez = Bluez;
 Bluez.Device = require('./lib/Device');
 Bluez.Profile = require('./lib/Profile');

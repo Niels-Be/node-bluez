@@ -19,6 +19,7 @@ declare class Bluez extends NodeJS.EventEmitter {
     init(): Promise<void>;
     registerAgent(agent: Bluez.Agent, capabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay", requestAsDefault?: boolean): Promise<void>;
     registerStaticKeyAgent(pin: number | string, requestAsDefault?: boolean): Promise<void>;
+    registerSimplePairingAgent(requestAsDefault?: boolean): Promise<void>;
     registerProfile(profile: Bluez.Profile, options: any): Promise<void>;
     registerSerialProfile(listener: (device: Bluez.Device, socket: Bluez.BluetoothSocket) => void, mode?: string, options?: stream.DuplexOptions): Promise<void>;
 
@@ -68,6 +69,8 @@ declare namespace Bluez {
         RequestPasskey(device: string, callback: (err?: Error | null, pin: number) => void): void;
         RequestPinCode(device: string, callback: (err?: Error | null, pin: string) => void): void;
     }
+    class StaticKeyAgent extends Agent { }
+    class SimplePairingAgent extends Agent { }
     interface DeviceProps {
         Adapter: any;
         Address: string;
