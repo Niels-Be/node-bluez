@@ -23,17 +23,21 @@ const Bluez = require('bluez');
 const bluetooth = new Bluez();
 
 // Register callback for new devices
-bluetooth.on('device', (address, props) => {
-    console.log("Found new Device " + address + " " + props.Name);
+bluetooth.on('device', async (address, props) => {
+    console.log("[NEW] Device:", address, props.Name);
+    const dev = await bluetooth.getDevice(address).catch(console.error);
+    if (!dev) return;
+    dev.on("PropertiesChanged", (props) => {
+        console.log("[CHG] Device:", address, props);
+    });
 });
 
-// Initialize bluetooth interface
-bluetooth.init().then(async ()=>{
+bluetooth.init().then(async () => {
     // listen on first bluetooth adapter
     const adapter = await bluetooth.getAdapter();
     await adapter.StartDiscovery();
     console.log("Discovering");
-});
+}).catch(console.error);
 ```
 
 Custom Agents and Profiles can be implemented by extending Agent / Profile base classes.

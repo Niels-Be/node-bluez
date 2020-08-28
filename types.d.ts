@@ -33,7 +33,7 @@ declare namespace Bluez {
         getProperty(name: string): Promise<any>;
         setProperty(name: string, value: any): Promise<void>;
 
-        on(event: "PropertiesChanged", listener: (interfaceName: string, properties: any) => void): this;
+        on(event: "PropertiesChanged", listener: (properties: { [key: string]: any }, invalidated: string[]) => void): this;
     }
     class Adapter extends DbusInterfaceBase {
         RemoveDevice(devicePath: string | Device): Promise<void>;
