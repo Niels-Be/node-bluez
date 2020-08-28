@@ -33,7 +33,7 @@ bluetooth.init().then(async () => {
     console.log("SerialProfile registered");
 
     // listen on first bluetooth adapter
-    const adapter = await bluetooth.getAdapter('hci0');
+    const adapter = await bluetooth.getAdapter();
     await adapter.StartDiscovery();
     console.log("Discovering");
 }).catch(console.error);

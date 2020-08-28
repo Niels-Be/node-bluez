@@ -8,9 +8,12 @@ declare class Bluez extends NodeJS.EventEmitter {
         service?: DBus.Service | string | null,
         objectPath?: string
     });
-    getAdapter(dev: string): Promise<Bluez.Adapter>;
-    getDevice(address: string): Promise<Bluez.Device>;
-    getAllDevicesAddresses(): string[];
+    getAdapter(dev?: string): Promise<Bluez.Adapter | null>;
+    findAdapter(filterFn: (props: any) => boolean): Promise<Bluez.Adapter | null>;
+    getDevice(address: string): Promise<Bluez.Device | null>;
+    findDevice(filterFn: (props: Bluez.DeviceProps) => boolean): Promise<Bluez.Device | null>;
+    getAllDevicesProps(): Bluez.DeviceProps[];
+
     getUserService(): any;
     getUserServiceObject(): any;
     init(): Promise<void>;
@@ -23,17 +26,21 @@ declare class Bluez extends NodeJS.EventEmitter {
     on(event: "error", listener: (error: Error) => void): this;
 }
 declare namespace Bluez {
-    class Adapter {
-        constructor(...args: any[]);
+    class DbusInterfaceBase extends NodeJS.EventEmitter {
+        constructor(dbusInterface: DBus.DBusInterface, bluez: Bluez);
+
+        getProperties(): Promise<any>;
+        getProperty(name: string): Promise<any>;
+        setProperty(name: string, value: any): Promise<void>;
+
+        on(event: "PropertiesChanged", listener: (interfaceName: string, properties: any) => void): this;
+    }
+    class Adapter extends DbusInterfaceBase {
         RemoveDevice(devicePath: string | Device): Promise<void>;
         SetDiscoveryFilter(filter: any): Promise<void>;
         GetDiscoveryFilters(): Promise<string[]>;
         StartDiscovery(): Promise<void>;
         StopDiscovery(): Promise<void>;
-
-        getProperties(): Promise<any>;
-        getProperty(name: string): Promise<any>;
-        setProperty(name: string, value: any): Promise<void>;
 
         Address(): Promise<any>;
         Alias(): Promise<any>;
@@ -49,17 +56,17 @@ declare namespace Bluez {
         UUIDs(): Promise<any>;
     }
     class Agent {
-        constructor(...args: any[]);
+        constructor(bluez: Bluez, dbusObject: DBus.DBusServiceObject);
         Unregister(): Promise<void>;
-        AuthorizeService(...args: any[]): void;
-        Cancel(...args: any[]): void;
-        DisplayPasskey(...args: any[]): void;
-        DisplayPinCode(...args: any[]): void;
-        Release(...args: any[]): void;
-        RequestAuthorization(...args: any[]): void;
-        RequestConfirmation(...args: any[]): void;
-        RequestPasskey(...args: any[]): void;
-        RequestPinCode(...args: any[]): void;
+        AuthorizeService(callback: (err?: Error | null) => void): void;
+        Cancel(callback: (err?: Error | null) => void): void;
+        DisplayPasskey(device: string, pincode: number, callback: (err?: Error | null) => void): void;
+        DisplayPinCode(device: string, pincode: string, callback: (err?: Error | null) => void): void;
+        Release(callback: (err?: Error | null) => void): void;
+        RequestAuthorization(device: string, callback: (err?: Error | null) => void): void;
+        RequestConfirmation(device: string, pincode: string, callback: (err?: Error | null) => void): void;
+        RequestPasskey(device: string, callback: (err?: Error | null, pin: number) => void): void;
+        RequestPinCode(device: string, callback: (err?: Error | null, pin: string) => void): void;
     }
     interface DeviceProps {
         Adapter: any;
@@ -83,8 +90,9 @@ declare namespace Bluez {
         TxPower?: number;
         UUIDs?: string[];
     }
-    class Device {
-        constructor(...args: any[]);
+    class Device extends DbusInterfaceBase {
+        getService(uuid: string): Promise<Service | null>;
+
         Connect(): Promise<void>;
         ConnectProfile(uuid: string): Promise<void>;
         Disconnect(): Promise<void>;
@@ -118,18 +126,14 @@ declare namespace Bluez {
         Trusted(): Promise<boolean>;
         TxPower(): Promise<number>;
         UUIDs(): Promise<string[]>;
-
-        getService(uuid: string): Service | undefined;
     }
-    class Service {
-        getCharacteristic(uuid: string): Characteristic | undefined;
+    class Service extends DbusInterfaceBase {
+        getCharacteristic(uuid: string): Promise<Characteristic | null>;
         //TODO: properties
-        getProperties(): Promise<any>;
-        getProperty(name: string): Promise<any>;
-        setProperty(name: string, value: any): Promise<void>;
     }
-    class Characteristic extends NodeJS.EventEmitter {
-        getDescriptor(uuid: string): Descriptor | undefined;
+    class Characteristic extends DbusInterfaceBase {
+        getDescriptor(uuid: string): Promise<Descriptor | null>;
+
         ReadValue(options?: any): Promise<Buffer>;
         WriteValue(value: Buffer | number[], options?: any): Promise<void>;
         AcquireWrite(options?: any): Promise<BluetoothSocket>;
@@ -137,11 +141,7 @@ declare namespace Bluez {
         StartNotify(): Promise<void>;
         StopNotify(): Promise<void>;
 
-        on(event: "notify", listener: (value: string) => void): this;
-
-        getProperties(): Promise<any>;
-        getProperty(name: string): Promise<any>;
-        setProperty(name: string, value: any): Promise<void>;
+        on(event: "notify", listener: (value: Buffer) => void): this;
 
         UUID(): Promise<string>;
         Service(): Promise<string>;
@@ -151,11 +151,8 @@ declare namespace Bluez {
         Notifying(): Promise<boolean>;
         Flags(): Promise<string[]>;
     }
-    class Descriptor {
+    class Descriptor extends DbusInterfaceBase {
         //TODO: properties
-        getProperties(): Promise<any>;
-        getProperty(name: string): Promise<any>;
-        setProperty(name: string, value: any): Promise<void>;
     }
     class Profile {
         public readonly uuid: string;
@@ -163,7 +160,7 @@ declare namespace Bluez {
         protected _DBusObject: any;
         protected _DBusInterface: any;
 
-        public constructor(bluez: Bluez, dbusObject: any);
+        public constructor(bluez: Bluez, dbusObject: DBus.DBusServiceObject);
         public NewConnection(device: string, fd: number, options: any, callback: Function): void;
         public Release(callback: Function): void;
         public RequestDisconnection(device: string, callback: Function): void;

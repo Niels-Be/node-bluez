@@ -50,8 +50,8 @@ bluetooth.init().then(async () => {
     console.log("Agent registered");
 
     // listen on first bluetooth adapter
-    adapter = await bluetooth.getAdapter('hci0');
-    if(!deviceFound) {
+    adapter = await bluetooth.getAdapter();
+    if (!deviceFound) {
         await adapter.StartDiscovery();
         console.log("Discovering");
     }
@@ -88,10 +88,10 @@ async function handleDevice(address, props) {
     await delay(10);
 
     // get the Service
-    const service = device.getService("0000ffe0-0000-1000-8000-00805f9b34fb");
+    const service = await device.getService("0000ffe0-0000-1000-8000-00805f9b34fb");
     if (!service) return console.log("No Service");
     // get the Characteristic from the Service
-    const characteristic = service.getCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
+    const characteristic = await service.getCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
     if (!characteristic) return console.log("No Characteristic");
 
     // on old Bluez versions < 5.48 AcquireNotify and AcquireWrite are not available
@@ -120,7 +120,7 @@ async function handleCom(device, characteristic) {
     console.log("Send: Test123");
     writer.write("Test123");
     writer.end();
-    while(!hasRead) await delay(100);
+    while (!hasRead) await delay(100);
     not.end();
 }
 
@@ -136,6 +136,6 @@ async function handleComOld(device, characteristic) {
     // get a write socket
     console.log("Send: Test123");
     await characteristic.WriteValue([...Buffer.from("Test123")]);
-    while(!hasRead) await delay(100);
+    while (!hasRead) await delay(100);
     await characteristic.StopNotify();
 }

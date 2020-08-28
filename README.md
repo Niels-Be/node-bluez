@@ -23,14 +23,14 @@ const Bluez = require('bluez');
 const bluetooth = new Bluez();
 
 // Register callback for new devices
-bluetooth.on('device', async (address, props) => {
+bluetooth.on('device', (address, props) => {
     console.log("Found new Device " + address + " " + props.Name);
 });
 
 // Initialize bluetooth interface
 bluetooth.init().then(async ()=>{
     // listen on first bluetooth adapter
-    const adapter = await bluetooth.getAdapter('hci0');
+    const adapter = await bluetooth.getAdapter();
     await adapter.StartDiscovery();
     console.log("Discovering");
 });
@@ -51,6 +51,7 @@ Have a look at the [examples](examples) for more detailed usage information.
 - Characteristic, Descriptor and Service properties where changed to functions
 - RawFdSocket was removed and replaced by [bluetooth-socket](https://github.com/waeco/node-bluetooth-socket) module
 - `Bluez.registerDummyAgent` was renamed to `Bluez.registerStaticKeyAgent` which takes a pin code as argument
+- `Bluez.getAllDevicesAddresses` was renamed to `Bluez.getAllDevicesProps` which returns all properties not only the address.
 
 ## API
 
@@ -83,11 +84,25 @@ Registers a Agent required for pairing.
 
 For available options see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/agent-api.txt).
 
-##### `getDevice(address: string): Promise<Device>`
+##### `getDevice(address: string): Promise<Device|null>`
 
 Returns a *Device* for a given address.
 
-*address* might be a adress in format `XX:XX:XX:XX:XX:XX` or `XX_XX_XX_XX_XX_XX` or `/org/bluez/hciX/dev_XX_XX_XX_XX_XX_XX`
+*address* can be a adress in format `XX:XX:XX:XX:XX:XX` or `XX_XX_XX_XX_XX_XX` or `/org/bluez/hciX/dev_XX_XX_XX_XX_XX_XX`
+
+
+##### `findDevice(filterCb: (props: DeviceProps) => boolean): Promise<Device|null>`
+
+Search for a *Device* given a custom filter function
+
+##### `getAdapter(name?: string): Promise<Device>`
+
+Returns a *Adapter* either by name or of not supplied the first one available.
+
+##### `findAdapter(filterCb: (props: AdapterProps) => boolean): Promise<Adapter|null>`
+
+Search for a *Adapter* given a custom filter function
+
 
 ##### Events
 
@@ -135,7 +150,7 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 Should not be called directly. Use `Bluez.getDevice()`.
 
-##### `getService(uuid: string): Service | undefined`
+##### `getService(uuid: string): Promise<Service | null>`
 
 Get a GATT Service of the Device.
 
@@ -145,7 +160,7 @@ Get a GATT Service of the Device.
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
-##### `getCharacteristic(uuid: string): Characteristic | undefined`
+##### `getCharacteristic(uuid: string): Promise<Characteristic | null>`
 
 Get a GATT Characteristic of the Service.
 
@@ -153,7 +168,7 @@ Get a GATT Characteristic of the Service.
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
-##### `getDescriptor(uuid: string): Descriptor | undefined`
+##### `getDescriptor(uuid: string): Promise<Descriptor | null>`
 
 Get a GATT Descriptor of the Characteristic.
 
@@ -187,3 +202,4 @@ A Profile implementation for Serial communication.
 - Complete the API docs
 - More examples
 - Tests
+- GATT Peripheral Services
