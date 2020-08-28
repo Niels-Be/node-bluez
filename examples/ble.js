@@ -76,6 +76,7 @@ async function handleDevice(address, props) {
             return device.ConnectProfile("0000ffe0-0000-1000-8000-00805f9b34fb");
         });
     }
+    console.log("Connected");
 
     // wait until services are resolved
     for (let i = 0; !await device.ServicesResolved(); i++) {
@@ -86,6 +87,7 @@ async function handleDevice(address, props) {
         await delay(100);
     }
     await delay(10);
+    console.log("Services Resolved");
 
     // get the Service
     const service = await device.getService("0000ffe0-0000-1000-8000-00805f9b34fb");
