@@ -8,9 +8,9 @@ declare class Bluez extends NodeJS.EventEmitter {
         service?: DBus.Service | string | null,
         objectPath?: string
     });
-    getAdapter(dev?: string): Promise<Bluez.Adapter | null>;
+    getAdapter(dev?: string): Promise<Bluez.Adapter>;
     findAdapter(filterFn: (props: any) => boolean): Promise<Bluez.Adapter | null>;
-    getDevice(address: string): Promise<Bluez.Device | null>;
+    getDevice(address: string): Promise<Bluez.Device>;
     findDevice(filterFn: (props: Bluez.DeviceProps) => boolean): Promise<Bluez.Device | null>;
     getAllDevicesProps(): Bluez.DeviceProps[];
 
