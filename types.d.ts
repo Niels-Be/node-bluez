@@ -4,8 +4,8 @@ import * as DBus from 'dbus';
 
 declare class Bluez extends NodeJS.EventEmitter {
     constructor(options?: {
-        bus?: DBus,
-        service?: DBus.Service | string | null,
+        bus?: DBus.DBusConnection,
+        service?: DBus.DBusService | string | null,
         objectPath?: string
     });
     getAdapter(dev?: string): Promise<Bluez.Adapter>;
@@ -35,6 +35,7 @@ declare namespace Bluez {
         setProperty(name: string, value: any): Promise<void>;
 
         on(event: "PropertiesChanged", listener: (properties: { [key: string]: any }, invalidated: string[]) => void): this;
+        on(event: string | symbol, listener: (...args: any[]) => void): this;
     }
     class Adapter extends DbusInterfaceBase {
         RemoveDevice(devicePath: string | Device): Promise<void>;
@@ -66,8 +67,8 @@ declare namespace Bluez {
         Release(callback: (err?: Error | null) => void): void;
         RequestAuthorization(device: string, callback: (err?: Error | null) => void): void;
         RequestConfirmation(device: string, pincode: string, callback: (err?: Error | null) => void): void;
-        RequestPasskey(device: string, callback: (err?: Error | null, pin: number) => void): void;
-        RequestPinCode(device: string, callback: (err?: Error | null, pin: string) => void): void;
+        RequestPasskey(device: string, callback: (err?: Error | null, pin?: number) => void): void;
+        RequestPinCode(device: string, callback: (err?: Error | null, pin?: string) => void): void;
     }
     class StaticKeyAgent extends Agent { }
     class SimplePairingAgent extends Agent { }
@@ -132,7 +133,11 @@ declare namespace Bluez {
     }
     class Service extends DbusInterfaceBase {
         getCharacteristic(uuid: string): Promise<Characteristic | null>;
-        //TODO: properties
+
+        UUID(): Promise<string>;
+        Primary(): Promise<boolean>;
+        Device(): Promise<any>;
+        Includes(): Promise<any[]>;
     }
     class Characteristic extends DbusInterfaceBase {
         getDescriptor(uuid: string): Promise<Descriptor | null>;
@@ -145,6 +150,7 @@ declare namespace Bluez {
         StopNotify(): Promise<void>;
 
         on(event: "notify", listener: (value: Buffer) => void): this;
+        on(event: string | symbol, listener: (...args: any[]) => void): this;
 
         UUID(): Promise<string>;
         Service(): Promise<string>;
@@ -155,7 +161,10 @@ declare namespace Bluez {
         Flags(): Promise<string[]>;
     }
     class Descriptor extends DbusInterfaceBase {
-        //TODO: properties
+        UUID(): Promise<string>;
+        Characteristic(): Promise<any>;
+        Value(): Promise<number[]>;
+        Flags(): Promise<string>;
     }
     class Profile {
         public readonly uuid: string;
