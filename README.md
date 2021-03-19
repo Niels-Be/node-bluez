@@ -36,7 +36,7 @@ Then use `bluez.registerAgent(agent, capability)` and `bluez.registerProfile(pro
 
 Have a look at the [examples](examples) or [tests](tests) for more detailed usage information.
 
-### API Docs
+## API Docs
 
 The API is based mostly on Bluez's DBus interface.
 Its documentation can be found in its [repository](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/).
@@ -45,3 +45,32 @@ Additionally this library provides some convenience functions which can be found
 
 There is also low level access to the underlying Dbus interfaces available. Please have a look at [dbus.md](src/dbus/README.md).
 
+### Tested with
+
+- Bluez 5.50 Ubuntu 18.04
+- Bluez 5.53 Ubuntu 20.04
+- Bluez 5.48 Debian Stretch
+- Bluez 5.50 Debian Buster
+- Bluez 5.54 Debian Sid
+
+Older Bluez version should work, but might miss some functions.
+However I can not recommend using GATT with Bluez < 5.48.
+
+## Migration
+
+#### 0.4.x -> 1.0
+- Underling Dbus library was replaced by [dbus-next](https://github.com/dbusjs/node-dbus-next).
+- `Device.getService()` was renamed to `Device.getGattService()`
+- `Bluez.getDevice()` was moved to `Adapter.getDevice()`
+- `Bluez.getAllDevicesProps()` was moved to `Adapter.listDevices()`
+- `Bluez.on("device")` was moved to `Adapter.on("DeviceAdded")`
+- `Bluez.registerStaticKeyAgent()` was replaced by `Bluez.registerAgent(new SimpleAgent(pin))`
+- `Bluez.registerSerialProfile()` was removed. See [example/serial.js](example/serial.js) for new usage
+
+#### 0.3.x -> 0.4
+
+- Characteristic Values are now always `Buffers`
+- Characteristic, Descriptor and Service properties where changed to functions
+- RawFdSocket was removed and replaced by [bluetooth-socket](https://github.com/waeco/node-bluetooth-socket) module
+- `Bluez.registerDummyAgent` was renamed to `Bluez.registerStaticKeyAgent` which takes a pin code as argument
+- `Bluez.getAllDevicesAddresses` was renamed to `Bluez.getAllDevicesProps` which returns all properties not only the address.

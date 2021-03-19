@@ -32,11 +32,25 @@ Registers a Agent required for pairing.
 
 For available options see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/agent-api.txt).
 
-##### `getDevice(address: string): Promise<Device>`
+##### `getDevice(address: string): Promise<Device|null>`
 
 Returns a *Device* for a given address.
 
-*address* might be a adress in format `XX:XX:XX:XX:XX:XX` or `XX_XX_XX_XX_XX_XX` or `/org/bluez/hciX/dev_XX_XX_XX_XX_XX_XX`
+*address* can be a adress in format `XX:XX:XX:XX:XX:XX` or `XX_XX_XX_XX_XX_XX` or `/org/bluez/hciX/dev_XX_XX_XX_XX_XX_XX`
+
+
+##### `findDevice(filterCb: (props: DeviceProps) => boolean): Promise<Device|null>`
+
+Search for a *Device* given a custom filter function
+
+##### `getAdapter(name?: string): Promise<Device>`
+
+Returns a *Adapter* either by name or of not supplied the first one available.
+
+##### `findAdapter(filterCb: (props: AdapterProps) => boolean): Promise<Adapter|null>`
+
+Search for a *Adapter* given a custom filter function
+
 
 ##### Events
 
@@ -48,7 +62,7 @@ Note that for paired devices this will be emitted no matter if the devices are i
 
 #### Adapter
 
-A Adapter represents a local Bluetooth adapter.
+An Adapter represents a local Bluetooth adapter.
 
 ##### `constructor(interface: DBus.Interface): Adapter`
 
@@ -61,7 +75,7 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 #### Agent
 
-A Agent is required for pairing with devices.
+An Agent is required for pairing with devices.
 
 This default implementation accepts every pair request and has the passkey `1234`
 
@@ -84,29 +98,29 @@ For available methods and properties see [Bluez Docs](https://git.kernel.org/pub
 
 Should not be called directly. Use `Bluez.getDevice()`.
 
-##### `getService(uuid: string): Service | undefined`
+##### `getService(uuid: string): Promise<Service | null>`
 
 Get a GATT Service of the Device.
 
 
 
-##### Service
+#### Service
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
-##### `getCharacteristic(uuid: string): Characteristic | undefined`
+##### `getCharacteristic(uuid: string): Promise<Characteristic | null>`
 
 Get a GATT Characteristic of the Service.
 
-##### Characteristic
+#### Characteristic
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
-##### `getDescriptor(uuid: string): Descriptor | undefined`
+##### `getDescriptor(uuid: string): Promise<Descriptor | null>`
 
 Get a GATT Descriptor of the Characteristic.
 
-##### Descriptor
+#### Descriptor
 
 For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
 
@@ -120,12 +134,7 @@ A Profile is a service provided by this Bluetooth device.
 
 *DBusObject* is the DBus Object under witch the interface should be registerd.
 
-
-##### `get uuid: string`
-
-returns the service UUID.
-
-For other available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/profile-api.txt).
+For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/profile-api.txt).
 
 #### SerialProfile
 
@@ -134,3 +143,4 @@ A Profile implementation for Serial communication.
 ##### `constructor(bluez: Bluez, DBusObject: DBus.ServiceObject, listener: (device: Device, socket: RawFdSocket)=>void): SerialProfile`
 
 *listener* is a callback that is called for each new connection to the Profile. Its *socket* parameter is the established channel between the two devices.
+
