@@ -1,5 +1,4 @@
-const { Device } = require("../dist/");
-const Bluez = require("../dist/");
+const Bluez = require("../dist");
 const BluetoothSocket = require("bluetooth-socket");
 
 const bluez = new Bluez.Bluez();

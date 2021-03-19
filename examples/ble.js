@@ -118,6 +118,13 @@ async function handleComSocket(device, characteristic) {
     notifier.on("close", () => console.log("Notifier closed"));
     notifier.on("error", console.error);
 
+    // get a write socket
+    const [writerFd] = await characteristic.AcquireWrite();
+    const writer = new BluetoothSocket(writerFd);
+    console.log("Send: Test123");
+    writer.write("Test123");
+    writer.end();
+
     // End the program after 10sec
     setTimeout(async () => {
         console.log("End by timeout");
@@ -125,13 +132,6 @@ async function handleComSocket(device, characteristic) {
         await device.Disconnect();
         bluetooth.bus.disconnect();
     }, 10000).unref();
-
-    // get a write socket
-    const [writerFd] = await characteristic.AcquireWrite();
-    const writer = new BluetoothSocket(writerFd);
-    console.log("Send: Test123");
-    writer.write("Test123");
-    writer.end();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,4 +152,11 @@ async function handleCom(device, characteristic) {
     // get a write socket
     console.log("Send: Test123");
     await characteristic.WriteValue(Buffer.from("Test123"));
+
+    // End the program after 10sec
+    setTimeout(async () => {
+        console.log("End by timeout");
+        await device.Disconnect();
+        bluetooth.bus.disconnect();
+    }, 10000).unref();
 }

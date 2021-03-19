@@ -6,11 +6,12 @@ async function run() {
     await b.init();
     const a = await b.getAdapter();
     const d = await a.getDevice("80:E1:26:08:94:85");
-    const s = await d.getGattService("0000ffe0-0000-1000-8000-00805f9b34fb");
-    const c = await s.getCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
     console.log("Connecting to dev");
     await d.Connect();
+
+    const s = await d.getGattService("0000ffe0-0000-1000-8000-00805f9b34fb");
+    const c = await s.getCharacteristic("0000ffe1-0000-1000-8000-00805f9b34fb");
 
     // get a notification socket
     const [notifierFd] = await c.AcquireNotify();
