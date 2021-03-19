@@ -14,7 +14,7 @@ export class ProfileWrapper extends DBus.interface.Interface {
         this.bluez = bluez;
     }
 
-    /*
+    /**
     void Release() [noreply]
     
         This method gets called when the service daemon
@@ -28,7 +28,7 @@ export class ProfileWrapper extends DBus.interface.Interface {
         if (this.impl.Release) return this.impl.Release();
     }
 
-    /*
+    /**
     void NewConnection(object device, fd, dict fd_properties)
 
         This method gets called when a new service level
@@ -47,7 +47,7 @@ export class ProfileWrapper extends DBus.interface.Interface {
         const dev = await this.bluez.getDeviceFromObject(device);
         return this.impl.NewConnection(dev, fd, options);
     }
-    /*
+    /**
     void RequestDisconnection(object device)
 
         This method gets called when a profile gets

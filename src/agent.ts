@@ -3,7 +3,7 @@ import { Device } from "./device";
 export interface Agent {
     readonly AgentCapabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay";
 
-    /*
+    /**
     void Release()
 
         This method gets called when the service daemon
@@ -13,7 +13,7 @@ export interface Agent {
         already been unregistered.
     */
     Release?(): Promise<void> | void;
-    /*
+    /**
     string RequestPinCode(object device)
 
         This method gets called when the service daemon
@@ -26,7 +26,7 @@ export interface Agent {
                         org.bluez.Error.Canceled
     */
     RequestPinCode?(device: Device): Promise<string> | string;
-    /*
+    /**
     void DisplayPinCode(object device, string pincode)
 
         This method gets called when the service daemon
@@ -52,7 +52,7 @@ export interface Agent {
                         org.bluez.Error.Canceled
     */
     DisplayPinCode?(device: Device, pincode: string): Promise<void> | void;
-    /*
+    /**
     uint32 RequestPasskey(object device)
 
         This method gets called when the service daemon
@@ -65,7 +65,7 @@ export interface Agent {
                         org.bluez.Error.Canceled
     */
     RequestPasskey?(device: Device): Promise<number> | number;
-    /*
+    /**
     void DisplayPasskey(object device, uint32 passkey,
                             uint16 entered)
 
@@ -87,7 +87,7 @@ export interface Agent {
         the value contains less than 6 digits.
     */
     DisplayPasskey?(device: Device, passkey: number, entered: number): Promise<void> | void;
-    /*
+    /**
     void RequestConfirmation(object device, uint32 passkey)
 
         This method gets called when the service daemon
@@ -104,7 +104,7 @@ export interface Agent {
                         org.bluez.Error.Canceled
     */
     RequestConfirmation?(device: Device, passkey: number): Promise<void> | void;
-    /*
+    /**
     void RequestAuthorization(object device)
 
         This method gets called to request the user to
@@ -119,7 +119,7 @@ export interface Agent {
                         org.bluez.Error.Canceled
     */
     RequestAuthorization?(device: Device): Promise<void> | void;
-    /*
+    /**
     void AuthorizeService(object device, string uuid)
 
         This method gets called when the service daemon
@@ -129,7 +129,7 @@ export interface Agent {
                         org.bluez.Error.Canceled
     */
     AuthorizeService?(device: Device, uuid: string): Promise<void> | void;
-    /*
+    /**
     void Cancel()
 
         This method gets called to indicate that the agent

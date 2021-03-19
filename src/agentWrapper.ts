@@ -14,7 +14,7 @@ export class AgentWrapper extends DBus.interface.Interface {
         this.bluez = bluez;
     }
 
-    /*
+    /**
     void Release()
 
         This method gets called when the service daemon
@@ -27,7 +27,7 @@ export class AgentWrapper extends DBus.interface.Interface {
         debug("Release");
         if (this.impl.Release) return this.impl.Release();
     }
-    /*
+    /**
     string RequestPinCode(object device)
  
         This method gets called when the service daemon
@@ -48,7 +48,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     void DisplayPinCode(object device, string pincode)
  
         This method gets called when the service daemon
@@ -82,7 +82,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     uint32 RequestPasskey(object device)
  
         This method gets called when the service daemon
@@ -103,7 +103,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     void DisplayPasskey(object device, uint32 passkey,
                             uint16 entered)
  
@@ -133,7 +133,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     void RequestConfirmation(object device, uint32 passkey)
  
         This method gets called when the service daemon
@@ -158,7 +158,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     void RequestAuthorization(object device)
  
         This method gets called to request the user to
@@ -181,7 +181,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     void AuthorizeService(object device, string uuid)
  
         This method gets called when the service daemon
@@ -199,7 +199,7 @@ export class AgentWrapper extends DBus.interface.Interface {
             throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
-    /*
+    /**
     void Cancel()
  
         This method gets called to indicate that the agent

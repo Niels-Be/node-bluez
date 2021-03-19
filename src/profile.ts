@@ -1,19 +1,19 @@
 import { Device } from "./device";
 
 export interface ProfileOptions {
-    /*
+    /**
         string Name
             Human readable name for the profile
     */
     Name: string;
-    /*
+    /**
         string Service
             The primary service class UUID
             (if different from the actual
                 profile UUID)
     */
     Service: string;
-    /*
+    /**
         string Role
             For asymmetric profiles that do not
             have UUIDs available to uniquely
@@ -23,7 +23,7 @@ export interface ProfileOptions {
             Possible values: "client", "server"
     */
     Role: string;
-    /*
+    /**
         uint16 Channel
             RFCOMM channel number that is used
             for client and server UUIDs.
@@ -31,7 +31,7 @@ export interface ProfileOptions {
             SDP record as well.
     */
     Channel: number;
-    /*
+    /**
         uint16 PSM
             PSM number that is used for client
             and server UUIDs.
@@ -39,20 +39,20 @@ export interface ProfileOptions {
             SDP record as well.
     */
     PSM: number;
-    /*
+    /**
         boolean RequireAuthentication
             Pairing is required before connections
             will be established. No devices will
             be connected if not paired.
     */
     RequireAuthentication: boolean;
-    /*
+    /**
         boolean RequireAuthorization
             Request authorization before any
             connection will be established.
     */
     RequireAuthorization: boolean;
-    /*
+    /**
         boolean AutoConnect
             In case of a client UUID this will
             force connection of the RFCOMM or
@@ -60,17 +60,17 @@ export interface ProfileOptions {
             is connected.
     */
     AutoConnect: boolean;
-    /*
+    /**
         string ServiceRecord
             Provide a manual SDP record.
     */
     ServiceRecord: string;
-    /*
+    /**
         uint16 Version
             Profile version (for SDP record)
     */
     Version: number;
-    /*
+    /**
         uint16 Features
             Profile features (for SDP record)
     */
@@ -81,7 +81,7 @@ export interface Profile {
     readonly ProfileOptions: Partial<ProfileOptions>;
     readonly UUID: string;
 
-    /*
+    /**
     void Release() [noreply]
     
         This method gets called when the service daemon
@@ -92,7 +92,7 @@ export interface Profile {
     */
     Release?(): Promise<void>;
 
-    /*
+    /**
     void NewConnection(object device, fd, dict fd_properties)
 
         This method gets called when a new service level
@@ -107,7 +107,7 @@ export interface Profile {
                          org.bluez.Error.Canceled
     */
     NewConnection(device: Device, fd: number, options: { [name: string]: any }): Promise<void> | void;
-    /*
+    /**
     void RequestDisconnection(object device)
 
         This method gets called when a profile gets
