@@ -11,17 +11,17 @@ async function run() {
     const a = await b.getAdapter();
 
     await a.SetDiscoveryFilter({
-        RSSI: new Variant("n", 5), // need to use variant to set correct data type
+        RSSI: new Variant("n", -100), // need to use variant to set correct data type
         DuplicateData: true,
     });
 
-    a.on("DeviceAdded", (address) => {
-        console.log("Found device: ", address);
+    a.on("DeviceAdded", (address, props) => {
+        console.log("Found device:", address, props);
     });
 
     console.log("Start discovery");
     await a.StartDiscovery();
-    await delay(3000);
+    await delay(10000);
     await a.StopDiscovery();
 
     b.getBus().disconnect();

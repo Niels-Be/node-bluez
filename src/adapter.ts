@@ -4,6 +4,7 @@ import { DBusError, ProxyObject } from "dbus-next";
 import { Bluez } from "./bluez";
 import { OrgBluezDevice1Props } from "./dbus/Device1";
 import Debug from "debug";
+import { unwrapDbusVariantObject } from "./utilts";
 const debug = Debug("bluez:Adapter");
 
 interface AdapterEvents {
@@ -20,7 +21,7 @@ export class Adapter extends OrgBluezAdapter1<AdapterEvents> {
                 // keep subnodes array up to date
                 this.dbusObject.nodes.push(objPath);
 
-                const props = interfaces["org.bluez.Device1"];
+                const props = unwrapDbusVariantObject(interfaces["org.bluez.Device1"]);
                 this.emit("DeviceAdded", props.Address, props);
             }
         });
