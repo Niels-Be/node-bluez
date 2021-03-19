@@ -15,18 +15,18 @@ npm install bluez
 ```js
 const Bluez = require('bluez');
 
-const bluetooth = new Bluez();
 // Initialize bluetooth interface
-bluetooth.init().then(async ()=>{
-    // listen on first bluetooth adapter
-    const adapter = await bluetooth.getAdapter('hci0');
-    // Register callback for new devices
-    adapter.on('DeviceAdded', (address, props) => {
-        console.log("Found new Device " + address + " " + props.Name);
-    });
-    await adapter.StartDiscovery();
-    console.log("Discovering");
+const bluetooth = new Bluez();
+await bluetooth.init();
+
+// listen on first bluetooth adapter
+const adapter = await bluetooth.getAdapter();
+// Register callback for new devices
+adapter.on('DeviceAdded', (address, props) => {
+    console.log("Found new Device " + address + " " + props.Name);
 });
+await adapter.StartDiscovery();
+console.log("Discovering");
 ```
 
 Custom Agents and Profiles can be implemented by extending Agent / Profile base classes.
@@ -47,6 +47,7 @@ There is also low level access to the underlying Dbus interfaces available. Plea
 
 ### Tested with
 
+- Node.js 12 and 14
 - Bluez 5.50 Ubuntu 18.04
 - Bluez 5.53 Ubuntu 20.04
 - Bluez 5.48 Debian Stretch
@@ -59,7 +60,8 @@ However I can not recommend using GATT with Bluez < 5.48.
 ## Migration
 
 #### 0.4.x -> 1.0
-- Underling Dbus library was replaced by [dbus-next](https://github.com/dbusjs/node-dbus-next).
+- Underling Dbus library was replaced by [dbus-next](https://github.com/dbusjs/node-dbus-next). If you depend on the old library, do not update.
+- [bluetooth-socket](https://github.com/waeco/node-bluetooth-socket) is no longer a required dependency, if your project depends on it install it directly.
 - `Device.getService()` was renamed to `Device.getGattService()`
 - `Bluez.getDevice()` was moved to `Adapter.getDevice()`
 - `Bluez.getAllDevicesProps()` was moved to `Adapter.listDevices()`
