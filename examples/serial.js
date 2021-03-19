@@ -11,6 +11,10 @@ try {
     } else throw err;
 }
 
+// set the target device, either name or address is required
+const DEVICE_NAME = "HC05";
+const DEVICE_ADDRESS = "98:D3:71:F5:E6:08";
+
 const bluetooth = new Bluez.Bluez();
 /** @type {Bluez.Adapter} */
 let adapter;
@@ -19,45 +23,44 @@ function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const SerialProfile = {
-    ProfileOptions: {
-        Name: "Node Serial Port",
-        Role: "client",
-        PSM: 0x0003,
-    },
-    // Bluetooth SSP uuid
-    UUID: "00001101-0000-1000-8000-00805f9b34fb",
-
-    NewConnection: async function (device, fd, options) {
+class SerialProfile extends Bluez.SerialProfile {
+    async NewConnection(device, fd, options) {
         try {
             const name = await device.Name();
             console.log("Serial Connection from " + name);
             // Get a socket from the RFCOMM FD
-            const socket = new BluetoothSocket(3);
+            const socket = new BluetoothSocket(fd);
             // The socket is a standard nodejs duplex stream.
             // Now you can communicate with the device like it was a network socket
-            socket.on("data", (data) => console.log(data));
+            socket.on("data", (data) => console.log("DATA:", data));
+
+            // error handling
+            socket.on("close", () => console.log("Socket was closed"));
+            socket.on("error", console.error);
+
+            // send some data
             socket.write("Hello World!\n");
-            (async function () {
-                await delay(60000);
+
+            // end the connection after 10sec
+            setTimeout(async function () {
                 console.log("end");
                 socket.end();
-                await device.Disconnect();
+                await device.Disconnect().catch(console.error);
                 console.log("dev disconnected");
-                await bluetooth.getBus().disconnect();
+                bluetooth.getBus().disconnect();
                 console.log("bus disconnected");
-            })().catch(console.error);
+            }, 10000);
         } catch (err) {
             console.error(err);
         }
-    },
-};
+    }
+}
 
 // callback for discovered devices
 async function discoverDevice(address, props) {
     console.log("Found new Device " + address + " " + props.Name);
     // apply some filtering
-    if (props.Name !== "HC-05") return false;
+    if (address !== DEVICE_ADDRESS && props.Name !== DEVICE_NAME) return false;
 
     // Get the device interface
     const device = await adapter.getDevice(address);
@@ -74,7 +77,7 @@ async function discoverDevice(address, props) {
     }
     // Connect to the Serial Service
     console.log("Connecting ...");
-    await device.ConnectProfile(SerialProfile.UUID).catch((err) => {
+    await device.ConnectProfile(new SerialProfile().UUID).catch((err) => {
         console.error("Error while connecting to device " + address + ": " + err.message);
         // during development devices might get suck in a invalid state.
         // if thats the case remove the device and try again
@@ -97,16 +100,17 @@ async function run() {
     //console.log("Agent registered");
 
     // Register the Serial Client Service
-    await bluetooth.registerProfile(SerialProfile);
+    await bluetooth.registerProfile(new SerialProfile());
     console.log("SerialProfile registered");
 
     // listen on first bluetooth adapter
     adapter = await bluetooth.getAdapter();
     // check if we are already paired with the device we are looking for
     const devices = await adapter.listDevices();
-    for (dev of devices) {
-        const props = await dev.getProperties();
-        if (await discoverDevice(props.Address, props).catch(() => false)) return;
+    for (const path in devices) {
+        const props = devices[path];
+        const deviceFound = await discoverDevice(props.Address, props).catch(() => false);
+        if (deviceFound) return;
     }
 
     // otherwise start discovery
@@ -114,6 +118,7 @@ async function run() {
     await adapter.StartDiscovery();
     console.log("Discovering");
     await delay(10000);
+    await adapter.StopDiscovery();
     console.log("Nothing found in time");
     await bluetooth.getBus().disconnect();
 }

@@ -28,4 +28,7 @@ async function run() {
 }
 run()
     .then(() => console.log("DONE"))
-    .catch(console.error);
+    .catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });
