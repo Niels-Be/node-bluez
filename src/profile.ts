@@ -78,7 +78,6 @@ export interface ProfileOptions {
 }
 
 export interface Profile {
-
     readonly ProfileOptions: Partial<ProfileOptions>;
     readonly UUID: string;
 
@@ -127,5 +126,4 @@ export interface Profile {
                          org.bluez.Error.Canceled
     */
     RequestDisconnection?(device: Device): Promise<void> | void;
-
 }

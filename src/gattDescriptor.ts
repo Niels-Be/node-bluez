@@ -1,5 +1,3 @@
-import { DBusError } from "dbus-next";
-import { OrgBluezGattDescriptor1 } from "./dbus/descriptor";
+import { OrgBluezGattDescriptor1 } from "./dbus/GattDescriptor1";
 
-export class Descriptor extends OrgBluezGattDescriptor1 {
-}
+export class GattDescriptor extends OrgBluezGattDescriptor1 {}

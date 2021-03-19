@@ -1,9 +1,10 @@
 import * as DBus from "dbus-next";
-import { Agent } from './agent';
+import { Agent } from "./agent";
 import { Bluez } from "./bluez";
+import Debug from "debug";
+const debug = Debug("bluez:AgentWrapper");
 
 export class AgentWrapper extends DBus.interface.Interface {
-
     private impl: Agent;
     private bluez: Bluez;
 
@@ -23,8 +24,8 @@ export class AgentWrapper extends DBus.interface.Interface {
         already been unregistered.
     */
     Release() {
-        if (this.impl.Release)
-            return this.impl.Release();
+        debug("Release");
+        if (this.impl.Release) return this.impl.Release();
     }
     /*
     string RequestPinCode(object device)
@@ -39,8 +40,13 @@ export class AgentWrapper extends DBus.interface.Interface {
                         org.bluez.Error.Canceled
     */
     async RequestPinCode(device: DBus.ObjectPath) {
-        const dev = await this.bluez.getDeviceFromObject(device);
-        return this.impl.RequestPinCode(dev);
+        debug("RequestPinCode", device);
+        if (this.impl.RequestPinCode) {
+            const dev = await this.bluez.getDeviceFromObject(device);
+            return this.impl.RequestPinCode(dev);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
+        }
     }
     /*
     void DisplayPinCode(object device, string pincode)
@@ -68,9 +74,12 @@ export class AgentWrapper extends DBus.interface.Interface {
                         org.bluez.Error.Canceled
     */
     async DisplayPinCode(device: DBus.ObjectPath, pincode: string) {
+        debug("DisplayPinCode", device, pincode);
         if (this.impl.DisplayPinCode) {
             const dev = await this.bluez.getDeviceFromObject(device);
             return this.impl.DisplayPinCode(dev, pincode);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
     /*
@@ -86,8 +95,13 @@ export class AgentWrapper extends DBus.interface.Interface {
                         org.bluez.Error.Canceled
     */
     async RequestPasskey(device: DBus.ObjectPath) {
-        const dev = await this.bluez.getDeviceFromObject(device);
-        return this.impl.RequestPasskey(dev);
+        debug("RequestPasskey", device);
+        if (this.impl.RequestPasskey) {
+            const dev = await this.bluez.getDeviceFromObject(device);
+            return this.impl.RequestPasskey(dev);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
+        }
     }
     /*
     void DisplayPasskey(object device, uint32 passkey,
@@ -111,9 +125,12 @@ export class AgentWrapper extends DBus.interface.Interface {
         the value contains less than 6 digits.
     */
     async DisplayPasskey(device: DBus.ObjectPath, passkey: number, entered: number) {
+        debug("DisplayPasskey", device, passkey, entered);
         if (this.impl.DisplayPasskey) {
             const dev = await this.bluez.getDeviceFromObject(device);
             return this.impl.DisplayPasskey(dev, passkey, entered);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
     /*
@@ -133,9 +150,12 @@ export class AgentWrapper extends DBus.interface.Interface {
                         org.bluez.Error.Canceled
     */
     async RequestConfirmation(device: DBus.ObjectPath, passkey: number) {
+        debug("RequestConfirmation", device, passkey);
         if (this.impl.RequestConfirmation) {
             const dev = await this.bluez.getDeviceFromObject(device);
             return this.impl.RequestConfirmation(dev, passkey);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
     /*
@@ -153,9 +173,12 @@ export class AgentWrapper extends DBus.interface.Interface {
                         org.bluez.Error.Canceled
     */
     async RequestAuthorization(device: DBus.ObjectPath) {
+        debug("RequestAuthorization", device);
         if (this.impl.RequestAuthorization) {
             const dev = await this.bluez.getDeviceFromObject(device);
             return this.impl.RequestAuthorization(dev);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
     /*
@@ -168,9 +191,12 @@ export class AgentWrapper extends DBus.interface.Interface {
                         org.bluez.Error.Canceled
     */
     async AuthorizeService(device: DBus.ObjectPath, uuid: string) {
+        debug("AuthorizeService", device);
         if (this.impl.AuthorizeService) {
             const dev = await this.bluez.getDeviceFromObject(device);
             return this.impl.AuthorizeService(dev, uuid);
+        } else {
+            throw new DBus.DBusError("org.bluez.Error.Rejected", "Not Supported", true);
         }
     }
     /*
@@ -180,21 +206,20 @@ export class AgentWrapper extends DBus.interface.Interface {
         request failed before a reply was returned.
     */
     async Cancel() {
-        if (this.impl.Cancel)
-            return this.impl.Cancel();
+        debug("Cancel");
+        if (this.impl.Cancel) return this.impl.Cancel();
     }
-
 }
 AgentWrapper.configureMembers({
     methods: {
         Release: {},
-        RequestPinCode: { inSignature: 'o', outSignature: 's' },
-        DisplayPinCode: { inSignature: 'os' },
-        RequestPasskey: { inSignature: 'o', outSignature: 'u' },
-        DisplayPasskey: { inSignature: 'ouq' },
-        RequestConfirmation: { inSignature: 'ou' },
-        RequestAuthorization: { inSignature: 'o' },
-        AuthorizeService: { inSignature: 'os' },
+        RequestPinCode: { inSignature: "o", outSignature: "s" },
+        DisplayPinCode: { inSignature: "os" },
+        RequestPasskey: { inSignature: "o", outSignature: "u" },
+        DisplayPasskey: { inSignature: "ouq" },
+        RequestConfirmation: { inSignature: "ou" },
+        RequestAuthorization: { inSignature: "o" },
+        AuthorizeService: { inSignature: "os" },
         Cancel: {},
-    }
+    },
 });

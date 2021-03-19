@@ -1,8 +1,7 @@
 import { Device } from "./device";
 
 export interface Agent {
-    readonly AgentCapabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" |
-    "NoInputNoOutput" | "KeyboardDisplay";
+    readonly AgentCapabilities: "DisplayOnly" | "DisplayYesNo" | "KeyboardOnly" | "NoInputNoOutput" | "KeyboardDisplay";
 
     /*
     void Release()
@@ -26,7 +25,7 @@ export interface Agent {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    RequestPinCode(device: Device): Promise<string> | string;
+    RequestPinCode?(device: Device): Promise<string> | string;
     /*
     void DisplayPinCode(object device, string pincode)
 
@@ -65,7 +64,7 @@ export interface Agent {
         Possible errors: org.bluez.Error.Rejected
                         org.bluez.Error.Canceled
     */
-    RequestPasskey(device: Device): Promise<number> | number;
+    RequestPasskey?(device: Device): Promise<number> | number;
     /*
     void DisplayPasskey(object device, uint32 passkey,
                             uint16 entered)
@@ -137,5 +136,4 @@ export interface Agent {
         request failed before a reply was returned.
     */
     Cancel?(): Promise<void> | void;
-
 }

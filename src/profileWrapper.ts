@@ -1,10 +1,10 @@
 import * as DBus from "dbus-next";
-import { Agent } from './agent';
 import { Bluez } from "./bluez";
 import { Profile } from "./profile";
+import Debug from "debug";
+const debug = Debug("bluez:ProfileWrapper");
 
 export class ProfileWrapper extends DBus.interface.Interface {
-
     private impl: Profile;
     private bluez: Bluez;
 
@@ -24,8 +24,8 @@ export class ProfileWrapper extends DBus.interface.Interface {
         already been unregistered.
     */
     Release() {
-        if (this.impl.Release)
-            return this.impl.Release();
+        debug("Release");
+        if (this.impl.Release) return this.impl.Release();
     }
 
     /*
@@ -43,6 +43,7 @@ export class ProfileWrapper extends DBus.interface.Interface {
                          org.bluez.Error.Canceled
     */
     async NewConnection(device: DBus.ObjectPath, fd: number, options: { [name: string]: any }) {
+        debug("NewConnection", device);
         const dev = await this.bluez.getDeviceFromObject(device);
         return this.impl.NewConnection(dev, fd, options);
     }
@@ -65,17 +66,17 @@ export class ProfileWrapper extends DBus.interface.Interface {
                          org.bluez.Error.Canceled
     */
     async RequestDisconnection(device: DBus.ObjectPath) {
+        debug("RequestDisconnection", device);
         if (this.impl.RequestDisconnection) {
             const dev = await this.bluez.getDeviceFromObject(device);
             return this.impl.RequestDisconnection(dev);
         }
     }
-
 }
 ProfileWrapper.configureMembers({
     methods: {
         Release: {},
-        NewConnection: { inSignature: 'oua{sv}' },
-        RequestDisconnection: { inSignature: 'o' },
-    }
+        NewConnection: { inSignature: "oha{sv}" },
+        RequestDisconnection: { inSignature: "o" },
+    },
 });

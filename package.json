@@ -1,7 +1,7 @@
 {
   "name": "bluez",
   "version": "1.0.0",
-  "description": "Bluez5 D-Bus library for easy to use bluetooth access in node",
+  "description": "Bluez5 D-Bus bindings for easy to use bluetooth access in Node.js",
   "keywords": [
     "bluez",
     "bluez5",
@@ -9,19 +9,17 @@
     "dbus",
     "d-bus"
   ],
-  "main": "index.js",
-  "types": "types.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "node-gyp configure build"
+    "build": "rm -r dist/ && tsc",
+    "lint": "eslint . --ext .ts",
+    "generate-dbus": "./helper/dbus-client-interface-generator.js --system --full -p --variant-any -t typescript-class-auto.ts -o src/dbus/ -r org.bluez /",
+    "prepublish": "npm run lint && npm run build"
   },
   "author": "WaeCo <aaqqws@googlemail.com>",
   "license": "MIT",
   "homepage": "https://github.com/waeco/node-bluez#readme",
-  "dependencies": {
-    "dbus-next": "git+https://github.com/dbusjs/node-dbus-next.git"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/waeco/node-bluez.git"
@@ -32,8 +30,23 @@
   "os": [
     "!win32"
   ],
+  "files": [
+    "dist/**/*"
+  ],
+  "dependencies": {
+    "bluetooth-socket": "git+https://github.com/waeco/node-bluetooth-socket.git",
+    "dbus-next": "git+https://github.com/waeco/node-dbus-next.git#unix-fd",
+    "debug": "^4.1.1"
+  },
   "devDependencies": {
-    "@types/node": "^12.7.4",
-    "typescript": "^3.6.2"
+    "@types/debug": "^4.1.5",
+    "@types/node": "^14.6.0",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
+    "eslint": "^7.22.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "typescript": "^4.0.0"
   }
 }

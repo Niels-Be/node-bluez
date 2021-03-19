@@ -6,11 +6,6 @@ Easy to use Node.js Bluez5 D-Bus library.
 
 
 ## Install
-
-Required Packages:
-- libglib2.0-dev
-- libdbus-1-dev
-
 ```
 npm install bluez
 ```
@@ -21,16 +16,14 @@ npm install bluez
 const Bluez = require('bluez');
 
 const bluetooth = new Bluez();
-
-// Register callback for new devices
-bluetooth.on('device', async (address, props) => {
-    console.log("Found new Device " + address + " " + props.Name);
-});
-
 // Initialize bluetooth interface
 bluetooth.init().then(async ()=>{
     // listen on first bluetooth adapter
     const adapter = await bluetooth.getAdapter('hci0');
+    // Register callback for new devices
+    adapter.on('DeviceAdded', (address, props) => {
+        console.log("Found new Device " + address + " " + props.Name);
+    });
     await adapter.StartDiscovery();
     console.log("Discovering");
 });
@@ -39,154 +32,16 @@ bluetooth.init().then(async ()=>{
 Custom Agents and Profiles can be implemented by extending Agent / Profile base classes.
 Then use `bluez.registerAgent(agent, capability)` and `bluez.registerProfile(profile, options)` to activate them.
 
-#### Examples
+### Examples
 
-Have a look at the [examples](examples) for more detailed usage information.
+Have a look at the [examples](examples) or [tests](tests) for more detailed usage information.
 
-## API
+### API Docs
 
-#### Bluez
+The API is based mostly on Bluez's DBus interface.
+Its documentation can be found in its [repository](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/).
 
-Contains most management functions.
+Additionally this library provides some convenience functions which can be found in [API.md](API.md).
 
-##### `constructor(options?: BluezOptions): Bluez`
+There is also low level access to the underlying Dbus interfaces available. Please have a look at [dbus.md](src/dbus/README.md).
 
-*options*:
-- `bus: DBus | undefined`: an existing DBus connection. Default: create new connection
-- `service: DBus.Service | string | null | undefined`: service where to register default Profiles / Agents. Default: null (connection local service)
-- `objectPath: string | undefined`: object path where to register default Profiles / Agents. Default: "/org/node/bluez"
-
-
-##### `init(): Promise<void>`
-
-Initializes DBus and interfaces. **MUST** be called bevor any bluetooth interaction is done.
-Attach device event listeners first, because calling *init()* will emit device events for paired devices.
-
-##### `registerProfile(profile: Profile, options: ProfileOptions): Promise<void>`
-
-Registers a Profile Bluetooth Service.
-
-For available options see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/profile-api.txt).
-
-##### `registerAgent(agent: Agent, capabilities: string): Promise<void>`
-
-Registers a Agent required for pairing.
-
-For available options see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/agent-api.txt).
-
-##### `getDevice(address: string): Promise<Device>`
-
-Returns a *Device* for a given address.
-
-*address* might be a adress in format `XX:XX:XX:XX:XX:XX` or `XX_XX_XX_XX_XX_XX` or `/org/bluez/hciX/dev_XX_XX_XX_XX_XX_XX`
-
-##### Events
-
-###### `on("device", address: string, props: DeviceProperties)`
-
-Emitted if a device was discovered.
-
-Note that for paired devices this will be emitted no matter if the devices are in range or not.
-
-#### Adapter
-
-A Adapter represents a local Bluetooth adapter.
-
-##### `constructor(interface: DBus.Interface): Adapter`
-
-*interface* is the DBus Interface corresponding the the Adapter.
-
-Should not be called directly. Use `Bluez.getAdapter()`.
-
-
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/adapter-api.txt).
-
-#### Agent
-
-A Agent is required for pairing with devices.
-
-This default implementation accepts every pair request and has the passkey `1234`
-
-##### `constructor(bluez: Bluez, DBusObject: DBus.ServiceObject): Agent`
-
-*DBusObject* is the DBus Object under witch the interface should be registerd.
-
-
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/agent-api.txt).
-
-#### Device
-
-A Device represents a remote Bluetooth device.
-
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/device-api.txt).
-
-##### `constructor(interface: DBus.Interface): Device`
-
-*interface* is the DBus Interface corresponding the the Device.
-
-Should not be called directly. Use `Bluez.getDevice()`.
-
-##### `getService(uuid: string): Service | undefined`
-
-Get a GATT Service of the Device.
-
-
-
-##### Service
-
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
-
-##### `getCharacteristic(uuid: string): Characteristic | undefined`
-
-Get a GATT Characteristic of the Service.
-
-##### Characteristic
-
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
-
-##### `getDescriptor(uuid: string): Descriptor | undefined`
-
-Get a GATT Descriptor of the Characteristic.
-
-##### Descriptor
-
-For available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/gatt-api.txt).
-
-
-
-#### Profile
-
-A Profile is a service provided by this Bluetooth device.
-
-##### `constructor(bluez: Bluez, DBusObject: DBus.ServiceObject): Profile`
-
-*DBusObject* is the DBus Object under witch the interface should be registerd.
-
-
-##### `get uuid: string`
-
-returns the service UUID.
-
-For other available methods and properties see [Bluez Docs](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/profile-api.txt).
-
-#### SerialProfile
-
-A Profile implementation for Serial communication.
-
-##### `constructor(bluez: Bluez, DBusObject: DBus.ServiceObject, listener: (device: Device, socket: RawFdSocket)=>void): SerialProfile`
-
-*listener* is a callback that is called for each new connection to the Profile. Its *socket* parameter is the established channel between the two devices.
-
-#### RawFdSocket
-
-A [`stream.Duplex`](https://nodejs.org/docs/latest-v8.x/api/stream.html#stream_class_stream_duplex) implementation similar to `net.Socket` that is able to use *RFCOMM* sockets provieded by `NewConnection` callback of Profiles.
-
-##### `constructor(fd: int, options: stream.Duplex.options): RawFdSocket`
-
-
-
-## TODO
-
-- Complete the API docs
-- More examples
-- Tests

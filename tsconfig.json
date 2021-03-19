@@ -5,19 +5,15 @@
         "module": "commonjs",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "target": "es6",
+        "target": "ES2019",
         "noImplicitAny": true,
         "strictNullChecks": true,
         "moduleResolution": "node",
         "sourceMap": true,
+        "declaration": true,
         "outDir": "dist",
         "baseUrl": ".",
-        "paths": {
-            "*": [
-                "node_modules/*",
-                "types/*"
-            ]
-        }
+        "lib": ["esnext"]
     },
     "include": [
         "src/**/*"
