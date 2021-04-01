@@ -1,6 +1,6 @@
 {
   "name": "bluez",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Bluez5 D-Bus library for easy to use bluetooth access in node",
   "keywords": [
     "bluez",
@@ -17,6 +17,11 @@
   "author": "WaeCo <aaqqws@googlemail.com>",
   "license": "MIT",
   "homepage": "https://github.com/waeco/node-bluez#readme",
+  "files": [
+    "lib/**/*",
+    "index.js",
+    "types.d.ts"
+  ],
   "dependencies": {
     "bluetooth-socket": "^0.1.2",
     "dbus": "^1.0.5"
