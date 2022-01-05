@@ -1,6 +1,6 @@
 {
   "name": "bluez",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Bluez5 D-Bus library for easy to use bluetooth access in node",
   "keywords": [
     "bluez",
@@ -23,7 +23,7 @@
     "types.d.ts"
   ],
   "dependencies": {
-    "bluetooth-socket": "^0.1.2",
+    "bluetooth-socket": "^0.2.0",
     "dbus": "^1.0.5"
   },
   "repository": {
