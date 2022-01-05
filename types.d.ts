@@ -44,18 +44,24 @@ declare namespace Bluez {
         StartDiscovery(): Promise<void>;
         StopDiscovery(): Promise<void>;
 
-        Address(): Promise<any>;
-        Alias(): Promise<any>;
-        Class(): Promise<any>;
-        Discoverable(): Promise<any>;
-        DiscoverableTimeout(): Promise<any>;
-        Discovering(): Promise<any>;
-        Modalias(): Promise<any>;
-        Name(): Promise<any>;
-        Pairable(): Promise<any>;
-        PairableTimeout(): Promise<any>;
-        Powered(value?: boolean): Promise<void | boolean>;
-        UUIDs(): Promise<any>;
+        Address(): Promise<string>;
+        Alias(): Promise<string>;
+        Alias(value: string): Promise<void>;
+        Class(): Promise<number>;
+        Discoverable(): Promise<boolean>;
+        Discoverable(value: boolean): Promise<void>;
+        DiscoverableTimeout(): Promise<number>;
+        DiscoverableTimeout(value: number): Promise<void>;
+        Discovering(): Promise<boolean>;
+        Modalias(): Promise<string>;
+        Name(): Promise<string>;
+        Pairable(): Promise<boolean>;
+        Pairable(value: boolean): Promise<void>;
+        PairableTimeout(): Promise<void>;
+        PairableTimeout(value: number): Promise<number>;
+        Powered(): Promise<boolean>;
+        Powered(value: boolean): Promise<void>;
+        UUIDs(): Promise<string[]>;
     }
     class Agent {
         constructor(bluez: Bluez, dbusObject: DBus.DBusServiceObject);
@@ -114,8 +120,10 @@ declare namespace Bluez {
         Address(): Promise<string>;
         AdvertisingFlags(): Promise<any>;
         Alias(): Promise<string>;
+        Alias(value: string): Promise<void>;
         Appearance(): Promise<number>;
         Blocked(): Promise<boolean>;
+        Blocked(value: boolean): Promise<void>;
         Class(): Promise<number>;
         Connected(): Promise<boolean>;
         Icon(): Promise<string>;
@@ -128,6 +136,7 @@ declare namespace Bluez {
         ServiceData(): Promise<any>;
         ServicesResolved(): Promise<boolean>;
         Trusted(): Promise<boolean>;
+        Trusted(value: boolean): Promise<void>;
         TxPower(): Promise<number>;
         UUIDs(): Promise<string[]>;
     }
