@@ -104,7 +104,7 @@ declare namespace Bluez {
         getService(uuid: string): Promise<Service | null>;
 
         Connect(timeout?: number): Promise<void>;
-        ConnectProfile(uuid: string): Promise<void>;
+        ConnectProfile(uuid: string, timeout?: number): Promise<void>;
         Disconnect(): Promise<void>;
         DisconnectProfile(uuid: string): Promise<void>;
         Pair(): Promise<void>;
