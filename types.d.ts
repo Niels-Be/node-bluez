@@ -97,7 +97,7 @@ declare namespace Bluez {
     class Device extends DbusInterfaceBase {
         getService(uuid: string): Promise<Service | null>;
 
-        Connect(): Promise<void>;
+        Connect(timeout?: number): Promise<void>;
         ConnectProfile(uuid: string): Promise<void>;
         Disconnect(): Promise<void>;
         DisconnectProfile(uuid: string): Promise<void>;
