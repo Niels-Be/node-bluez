@@ -66,7 +66,7 @@ declare namespace Bluez {
     class Agent {
         constructor(bluez: Bluez, dbusObject: DBus.DBusServiceObject);
         Unregister(): Promise<void>;
-        AuthorizeService(callback: (err?: Error | null) => void): void;
+        AuthorizeService(device: string, uuid: string, callback: (err?: Error | null) => void): void;
         Cancel(callback: (err?: Error | null) => void): void;
         DisplayPasskey(device: string, pincode: number, callback: (err?: Error | null) => void): void;
         DisplayPinCode(device: string, pincode: string, callback: (err?: Error | null) => void): void;
